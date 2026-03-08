@@ -13,6 +13,11 @@ import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
 import ResearchReport from "./pages/ResearchReport";
 import ActivityLog from "./pages/ActivityLog";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,20 +28,26 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AppLayout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/trending" element={<TrendingTopics />} />
-            <Route path="/drafts" element={<AIDrafts />} />
-            <Route path="/published" element={<Published />} />
-            <Route path="/sources" element={<Sources />} />
-            <Route path="/research/:topicId" element={<ResearchReport />} />
-            <Route path="/activity-log" element={<ActivityLog />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AppLayout>
+        <Routes>
+          {/* Auth routes (no layout) */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+
+          {/* App routes (with layout) */}
+          <Route path="/" element={<AppLayout><Dashboard /></AppLayout>} />
+          <Route path="/trending" element={<AppLayout><TrendingTopics /></AppLayout>} />
+          <Route path="/drafts" element={<AppLayout><AIDrafts /></AppLayout>} />
+          <Route path="/published" element={<AppLayout><Published /></AppLayout>} />
+          <Route path="/sources" element={<AppLayout><Sources /></AppLayout>} />
+          <Route path="/research/:topicId" element={<AppLayout><ResearchReport /></AppLayout>} />
+          <Route path="/activity-log" element={<AppLayout><ActivityLog /></AppLayout>} />
+          <Route path="/notifications" element={<AppLayout><Notifications /></AppLayout>} />
+          <Route path="/settings" element={<AppLayout><Settings /></AppLayout>} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
