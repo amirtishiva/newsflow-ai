@@ -43,7 +43,7 @@ const Signup = () => {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -56,8 +56,15 @@ const Signup = () => {
       toast.error(error.message);
       return;
     }
-    toast.success("Account created! Please check your email to verify.");
-    navigate("/onboarding");
+    // If session exists, user is auto-confirmed → go to onboarding
+    if (data.session) {
+      toast.success("Account created! Let's set up your profile.");
+      navigate("/onboarding");
+    } else {
+      // Email confirmation required
+      toast.success("Account created! Please check your email to verify, then sign in.");
+      navigate("/login");
+    }
   };
 
   return (

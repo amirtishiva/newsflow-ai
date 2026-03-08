@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Newspaper, CheckCircle, XCircle } from "lucide-react";
+import { Newspaper, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,13 +27,12 @@ const ResetPassword = () => {
   const passwordsMatch = password === confirmPw && confirmPw.length > 0;
 
   useEffect(() => {
-    // Listen for PASSWORD_RECOVERY event
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") {
         setReady(true);
       }
     });
-    // Also check URL hash for recovery type
+    // Check URL hash for recovery type
     const hash = window.location.hash;
     if (hash.includes("type=recovery")) {
       setReady(true);
@@ -74,52 +73,63 @@ const ResetPassword = () => {
           <div>
             <CardTitle className="text-2xl font-serif">Set New Password</CardTitle>
             <p className="text-sm text-muted-foreground font-body mt-1">
-              Choose a strong password for your account
+              {ready ? "Choose a strong password for your account" : "Verifying your reset link…"}
             </p>
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleReset} className="space-y-4">
-            <div className="space-y-2">
-              <Label className="font-body">New Password</Label>
-              <Input
-                type="password"
-                placeholder="Min. 12 characters"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              {password.length > 0 && (
-                <div className="space-y-1 mt-2">
-                  {passwordRules.map((rule) => {
-                    const valid = rule.test(password);
-                    return (
-                      <div key={rule.label} className="flex items-center gap-2">
-                        {valid ? <CheckCircle className="h-3 w-3 text-success" /> : <XCircle className="h-3 w-3 text-destructive" />}
-                        <span className={`text-[11px] font-body ${valid ? "text-success" : "text-muted-foreground"}`}>
-                          {rule.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+          {!ready ? (
+            <div className="text-center space-y-4 py-4">
+              <p className="text-sm text-muted-foreground font-body">
+                This page requires a valid password reset link. If you haven't requested one, please use the forgot password form.
+              </p>
+              <Button variant="outline" className="font-body" onClick={() => navigate("/forgot-password")}>
+                <ArrowLeft className="mr-1 h-4 w-4" /> Go to Forgot Password
+              </Button>
             </div>
-            <div className="space-y-2">
-              <Label className="font-body">Confirm New Password</Label>
-              <Input
-                type="password"
-                placeholder="Re-enter password"
-                value={confirmPw}
-                onChange={(e) => setConfirmPw(e.target.value)}
-              />
-              {confirmPw.length > 0 && !passwordsMatch && (
-                <p className="text-[11px] text-destructive font-body">Passwords do not match</p>
-              )}
-            </div>
-            <Button type="submit" className="w-full font-body" disabled={loading || !allValid || !passwordsMatch}>
-              {loading ? "Resetting..." : "Reset Password"}
-            </Button>
-          </form>
+          ) : (
+            <form onSubmit={handleReset} className="space-y-4">
+              <div className="space-y-2">
+                <Label className="font-body">New Password</Label>
+                <Input
+                  type="password"
+                  placeholder="Min. 12 characters"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {password.length > 0 && (
+                  <div className="space-y-1 mt-2">
+                    {passwordRules.map((rule) => {
+                      const valid = rule.test(password);
+                      return (
+                        <div key={rule.label} className="flex items-center gap-2">
+                          {valid ? <CheckCircle className="h-3 w-3 text-success" /> : <XCircle className="h-3 w-3 text-destructive" />}
+                          <span className={`text-[11px] font-body ${valid ? "text-success" : "text-muted-foreground"}`}>
+                            {rule.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label className="font-body">Confirm New Password</Label>
+                <Input
+                  type="password"
+                  placeholder="Re-enter password"
+                  value={confirmPw}
+                  onChange={(e) => setConfirmPw(e.target.value)}
+                />
+                {confirmPw.length > 0 && !passwordsMatch && (
+                  <p className="text-[11px] text-destructive font-body">Passwords do not match</p>
+                )}
+              </div>
+              <Button type="submit" className="w-full font-body" disabled={loading || !allValid || !passwordsMatch}>
+                {loading ? "Resetting..." : "Reset Password"}
+              </Button>
+            </form>
+          )}
         </CardContent>
       </Card>
     </div>
