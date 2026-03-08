@@ -21,6 +21,7 @@ export interface AIDraft {
   contentLength: "short" | "medium" | "long";
   createdAt: string;
   updatedAt: string;
+  tweetUrl?: string;
 }
 
 export interface MonitoredSource {
