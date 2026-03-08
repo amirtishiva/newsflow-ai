@@ -28,12 +28,11 @@
 ### Client Setup
 
 ```typescript
-import { createClient } from '@supabase/supabase-js';
+// Use the auto-generated client — do NOT create manually
+import { supabase } from "@/integrations/supabase/client";
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+// Project: utneimavxjfgiqwbuufs
+// URL: https://utneimavxjfgiqwbuufs.supabase.co
 ```
 
 ### Patterns
@@ -1078,4 +1077,25 @@ if (error) {
 
 ---
 
-*Generated: 2026-03-08 | Version: 1.0 | Status: Specification*
+---
+
+## 15. Supabase Project Details
+
+| Property | Value |
+|----------|-------|
+| Project ID | `utneimavxjfgiqwbuufs` |
+| URL | `https://utneimavxjfgiqwbuufs.supabase.co` |
+| Edge Functions Base | `https://utneimavxjfgiqwbuufs.supabase.co/functions/v1` |
+| Dashboard | `https://supabase.com/dashboard/project/utneimavxjfgiqwbuufs` |
+
+### Pre-configured Secrets
+
+`SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_URL`, `LOVABLE_API_KEY`
+
+### Required Secrets (to be added)
+
+`GEMINI_API_KEY`, `TWITTER_CONSUMER_KEY`, `TWITTER_CONSUMER_SECRET`, `TWITTER_ACCESS_TOKEN`, `TWITTER_ACCESS_TOKEN_SECRET`, `YOUTUBE_API_KEY`, `RESEND_API_KEY`
+
+---
+
+*Generated: 2026-03-08 | Version: 1.1 | Status: Specification — aligned with Supabase project `utneimavxjfgiqwbuufs`*
