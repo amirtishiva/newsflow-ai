@@ -58,7 +58,7 @@ const Onboarding = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      toast.success("Onboarding complete! Welcome to NewsFlow AI.");
+      toast.success("Onboarding complete! Welcome to News2Flow AI.");
       navigate("/");
     }
   };
