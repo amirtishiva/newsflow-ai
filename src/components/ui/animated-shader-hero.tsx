@@ -201,7 +201,7 @@ const Hero: React.FC<HeroProps> = ({
 
         <div className="max-w-4xl space-y-6">
           {/* Headline */}
-          <h1 className="font-serif tracking-tight">
+          <h1 className="font-mono tracking-tight uppercase">
             <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white animate-fade-in">
               {headline.line1}
             </span>
