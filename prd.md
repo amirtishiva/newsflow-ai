@@ -248,7 +248,7 @@ Settings → Style Training → Upload Scripts → Processing → Style Profile 
 ### 7.1 Near-Term (Next Release)
 - **Backend integration** — Connect Lovable Cloud for persistent database, authentication, and file storage.
 - **Real Twitter OAuth** — Replace mock with actual OAuth 2.0 flow for publishing.
-- **Real AI draft generation** — Integrate LLM API (OpenAI/Anthropic) with user style profiles for actual draft generation.
+- **Real AI draft generation** — Integrate Google Gemini API with user style profiles for actual draft generation.
 - **Real source monitoring** — Implement Twitter API, RSS parsing, and YouTube API integrations via edge functions.
 
 ### 7.2 Mid-Term

@@ -42,7 +42,7 @@
 └─────────────────────────────────────────────────────┘
            │
      External APIs
-  (Twitter/X, RSS, YouTube, OpenAI)
+  (Twitter/X, RSS, YouTube, Google Gemini)
 ```
 
 **Key Principles:**
@@ -706,7 +706,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 | Purpose | Generate AI draft from a trending topic using user's trained voice |
 | Auth | JWT required (verify in code) |
 | Method | POST |
-| Secrets | `OPENAI_API_KEY` |
+| Secrets | `GEMINI_API_KEY` |
 
 **Input:**
 ```json
@@ -719,7 +719,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 **Logic:**
 1. Fetch topic from `trending_topics`
 2. Fetch user's training scripts to build style prompt
-3. Call OpenAI GPT-4 with topic context + style instructions + length constraint
+3. Call Google Gemini (`gemini-2.5-flash`) via `https://generativelanguage.googleapis.com/v1beta` with topic context + style instructions + length constraint
 4. Insert result into `ai_drafts` with status `pending`
 5. Update `trending_topics.has_draft = true`
 6. Insert notification of type `trend_alert`
@@ -794,7 +794,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 | Purpose | Generate a deep-dive research report for a topic |
 | Auth | JWT required |
 | Method | POST |
-| Secrets | `OPENAI_API_KEY` |
+| Secrets | `GEMINI_API_KEY` |
 
 **Input:**
 ```json
@@ -805,7 +805,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 
 **Logic:**
 1. Fetch topic and its source data
-2. Call OpenAI with research synthesis prompt
+2. Call Google Gemini (`gemini-2.5-flash`) with research synthesis prompt
 3. Parse structured output into `key_facts`, `timeline`, `quotes`, `sources`
 4. Insert into `research_reports`
 5. Log activity
@@ -819,7 +819,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 | Purpose | Analyze uploaded training script to extract writing style features |
 | Auth | Service role (triggered after upload) |
 | Method | POST |
-| Secrets | `OPENAI_API_KEY` |
+| Secrets | `GEMINI_API_KEY` |
 
 **Input:**
 ```json
@@ -832,7 +832,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 **Logic:**
 1. Download file from storage bucket
 2. Extract text content (parse PDF/DOCX if needed)
-3. Send to OpenAI for style analysis (tone, vocabulary, structure patterns)
+3. Send to Google Gemini for style analysis (tone, vocabulary, structure patterns)
 4. Update `training_scripts.status = 'complete'`
 5. Create notification `training_complete`
 6. Log activity
@@ -1032,7 +1032,7 @@ Stored via Supabase Secrets (Vault), accessed in Edge Functions via `Deno.env.ge
 
 | Secret | Used By | Description |
 |--------|---------|-------------|
-| `OPENAI_API_KEY` | `generate-draft`, `generate-research`, `process-script` | OpenAI GPT-4 API key |
+| `GEMINI_API_KEY` | `generate-draft`, `generate-research`, `process-script` | Google Gemini API key (personal) |
 | `TWITTER_CONSUMER_KEY` | `poll-sources`, `publish-tweet` | Twitter/X API key |
 | `TWITTER_CONSUMER_SECRET` | `poll-sources`, `publish-tweet` | Twitter/X API secret |
 | `TWITTER_ACCESS_TOKEN` | `poll-sources` | App-level Twitter access token |
