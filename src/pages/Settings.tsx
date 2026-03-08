@@ -469,6 +469,28 @@ const Settings = () => {
                 <Switch checked={trendAlerts} onCheckedChange={setTrendAlerts} />
               </div>
 
+              {/* Significance Threshold - Req 13.4 */}
+              <div className="space-y-3 p-4 rounded bg-muted">
+                <div>
+                  <p className="text-sm font-semibold font-body">Alert Significance Threshold</p>
+                  <p className="text-xs text-muted-foreground font-body">
+                    Only alert when topics exceed this score ({alertThreshold[0]}/100)
+                  </p>
+                </div>
+                <Slider
+                  value={alertThreshold}
+                  onValueChange={setAlertThreshold}
+                  min={10}
+                  max={100}
+                  step={5}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
+                  <span>10 (Most alerts)</span>
+                  <span>100 (Critical only)</span>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label className="font-body">Notification Frequency</Label>
                 <Select value={notifFrequency} onValueChange={(v) => setNotifFrequency(v as "immediate" | "hourly" | "daily")}>
