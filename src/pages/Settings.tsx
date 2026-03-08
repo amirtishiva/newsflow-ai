@@ -9,21 +9,12 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Upload,
-  FileText,
-  CheckCircle,
-  Loader2,
-  AlertCircle,
-  Twitter,
-  Clock,
-  Mail,
-  Trash2,
-  Link,
-  Ruler,
-  GraduationCap,
+  Upload, FileText, CheckCircle, Loader2, AlertCircle, Twitter, Clock, Mail, Trash2, Link, Ruler, GraduationCap,
 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
-import { mockTrainingScripts, type TrainingScript } from "@/lib/mock-data";
+import { useTrainingScripts, useUploadScript, useDeleteScript } from "@/hooks/use-training-scripts";
+import { usePreferences, useUpdatePreferences } from "@/hooks/use-preferences";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
 const MAX_FILE_SIZE_MB = 10;
@@ -31,96 +22,36 @@ const MIN_WORD_COUNT = 100;
 const MAX_SCRIPTS = 20;
 
 const Settings = () => {
-  const [scripts, setScripts] = useState<TrainingScript[]>(mockTrainingScripts);
-  const [deliveryTime, setDeliveryTime] = useState("10:00");
-  const [deliveryDays, setDeliveryDays] = useState({
-    Mon: true, Tue: true, Wed: true, Thu: true, Fri: true, Sat: false, Sun: false,
-  });
-  const [emailAlerts, setEmailAlerts] = useState(true);
-  const [inAppAlerts, setInAppAlerts] = useState(true);
-  const [trendAlerts, setTrendAlerts] = useState(true);
-  const [twitterConnected, setTwitterConnected] = useState(true);
-  const [defaultLength, setDefaultLength] = useState<"short" | "medium" | "long">("medium");
-  const [notifFrequency, setNotifFrequency] = useState<"immediate" | "hourly" | "daily">("immediate");
-  const [quietHoursEnabled, setQuietHoursEnabled] = useState(false);
-  const [quietStart, setQuietStart] = useState("22:00");
-  const [quietEnd, setQuietEnd] = useState("07:00");
-  const [digestEnabled, setDigestEnabled] = useState(true);
-  const [alertThreshold, setAlertThreshold] = useState([70]);
+  const { data: scripts, isLoading: scriptsLoading } = useTrainingScripts();
+  const uploadScript = useUploadScript();
+  const deleteScript = useDeleteScript();
+  const { data: prefs, isLoading: prefsLoading } = usePreferences();
+  const updatePrefs = useUpdatePreferences();
 
-  const trainingProgress = scripts.filter((s) => s.status === "complete").length;
+  // Local state for form fields (initialized from prefs)
+  const [localPrefs, setLocalPrefs] = useState<Record<string, any> | null>(null);
+  const p = localPrefs ?? prefs;
+
+  const trainingProgress = scripts?.filter((s) => s.status === "complete").length ?? 0;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    // Validate file type
-    const validTypes = [".txt", ".docx", ".pdf"];
     const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
-    if (!validTypes.includes(ext)) {
+    if (![".txt", ".docx", ".pdf"].includes(ext)) {
       toast.error("Invalid file type. Only .txt, .docx, and .pdf are accepted.");
       return;
     }
-
-    // Validate file size (10MB max)
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      toast.error(`File exceeds ${MAX_FILE_SIZE_MB}MB limit. Please upload a smaller file.`);
+      toast.error(`File exceeds ${MAX_FILE_SIZE_MB}MB limit.`);
       return;
     }
-
-    // Validate max scripts
-    if (scripts.length >= MAX_SCRIPTS) {
-      toast.error(`Maximum of ${MAX_SCRIPTS} scripts reached. Remove one before uploading.`);
+    if ((scripts?.length ?? 0) >= MAX_SCRIPTS) {
+      toast.error(`Maximum of ${MAX_SCRIPTS} scripts reached.`);
       return;
     }
-
-    // Simulate word count validation for .txt files
-    if (ext === ".txt") {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const text = ev.target?.result as string;
-        const wordCount = text.trim().split(/\s+/).length;
-        if (wordCount < MIN_WORD_COUNT) {
-          toast.error(`Script must contain at least ${MIN_WORD_COUNT} words. Found ${wordCount}.`);
-          return;
-        }
-        addScript(file);
-      };
-      reader.readAsText(file);
-    } else {
-      // For docx/pdf, we'd validate server-side; proceed with upload
-      addScript(file);
-    }
-
+    uploadScript.mutate(file);
     e.target.value = "";
-  };
-
-  const addScript = (file: File) => {
-    const sizeStr = file.size < 1024 * 1024
-      ? `${(file.size / 1024).toFixed(0)} KB`
-      : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
-
-    const newScript: TrainingScript = {
-      id: `ts${Date.now()}`,
-      fileName: file.name,
-      fileSize: sizeStr,
-      uploadedAt: new Date().toISOString().slice(0, 10),
-      status: "processing",
-    };
-    setScripts((prev) => [...prev, newScript]);
-    toast.success("Script uploaded. Processing...");
-
-    setTimeout(() => {
-      setScripts((prev) =>
-        prev.map((s) => (s.id === newScript.id ? { ...s, status: "complete" as const } : s))
-      );
-      toast.success("Script processing complete!");
-    }, 3000);
-  };
-
-  const handleRemoveScript = (id: string) => {
-    setScripts((prev) => prev.filter((s) => s.id !== id));
-    toast.success("Script removed.");
   };
 
   const statusIcon = (status: string) => {
@@ -129,48 +60,29 @@ const Settings = () => {
     return <AlertCircle className="h-3 w-3 text-destructive" />;
   };
 
+  if (prefsLoading) return <div className="space-y-4 max-w-4xl">{[1,2,3].map(i => <Skeleton key={i} className="h-40 w-full" />)}</div>;
+
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">
-          Settings
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1 font-body">
-          Configure your profile, AI training, and delivery preferences
-        </p>
+        <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">Settings</h1>
+        <p className="text-sm text-muted-foreground mt-1 font-body">Configure your profile, AI training, and delivery preferences</p>
       </div>
 
       <Tabs defaultValue="training">
         <TabsList>
-          <TabsTrigger value="training">
-            <FileText className="mr-1 h-3 w-3" /> Style Training
-          </TabsTrigger>
-          <TabsTrigger value="content">
-            <Ruler className="mr-1 h-3 w-3" /> Content
-          </TabsTrigger>
-          <TabsTrigger value="delivery">
-            <Clock className="mr-1 h-3 w-3" /> Delivery
-          </TabsTrigger>
-          <TabsTrigger value="twitter">
-            <Twitter className="mr-1 h-3 w-3" /> Twitter
-          </TabsTrigger>
-          <TabsTrigger value="notifications">
-            <Mail className="mr-1 h-3 w-3" /> Notifications
-          </TabsTrigger>
+          <TabsTrigger value="training"><FileText className="mr-1 h-3 w-3" /> Style Training</TabsTrigger>
+          <TabsTrigger value="content"><Ruler className="mr-1 h-3 w-3" /> Content</TabsTrigger>
+          <TabsTrigger value="delivery"><Clock className="mr-1 h-3 w-3" /> Delivery</TabsTrigger>
+          <TabsTrigger value="twitter"><Twitter className="mr-1 h-3 w-3" /> Twitter</TabsTrigger>
+          <TabsTrigger value="notifications"><Mail className="mr-1 h-3 w-3" /> Notifications</TabsTrigger>
         </TabsList>
 
-        {/* Style Profile Tab - Req 5 */}
         <TabsContent value="training">
           <div className="space-y-4">
-            {/* Style Profile Display */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base font-serif flex items-center gap-2">
-                  <GraduationCap className="h-4 w-4" /> Style Profile
-                </CardTitle>
-                <p className="text-xs text-muted-foreground font-body">
-                  AI analysis of your writing patterns based on uploaded scripts
-                </p>
+                <CardTitle className="text-base font-serif flex items-center gap-2"><GraduationCap className="h-4 w-4" /> Style Profile</CardTitle>
               </CardHeader>
               <CardContent>
                 {trainingProgress >= 5 ? (
@@ -178,86 +90,53 @@ const Settings = () => {
                     <div className="p-3 rounded bg-muted text-center">
                       <p className="text-[10px] font-body uppercase tracking-wider text-muted-foreground">Tone</p>
                       <p className="text-sm font-semibold font-body mt-1 text-foreground">Authoritative</p>
-                      <p className="text-[10px] text-muted-foreground font-body mt-0.5">Direct, confident phrasing</p>
                     </div>
                     <div className="p-3 rounded bg-muted text-center">
                       <p className="text-[10px] font-body uppercase tracking-wider text-muted-foreground">Vocabulary</p>
                       <p className="text-sm font-semibold font-body mt-1 text-foreground">Technical</p>
-                      <p className="text-[10px] text-muted-foreground font-body mt-0.5">Industry-specific terms</p>
                     </div>
                     <div className="p-3 rounded bg-muted text-center">
                       <p className="text-[10px] font-body uppercase tracking-wider text-muted-foreground">Structure</p>
                       <p className="text-sm font-semibold font-body mt-1 text-foreground">Concise</p>
-                      <p className="text-[10px] text-muted-foreground font-body mt-0.5">Short sentences, active voice</p>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground font-body text-center py-4">
-                    Upload at least 5 scripts to generate your style profile.
-                  </p>
+                  <p className="text-sm text-muted-foreground font-body text-center py-4">Upload at least 5 scripts to generate your style profile.</p>
                 )}
               </CardContent>
             </Card>
 
-            {/* Training Scripts Card */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-base font-serif">AI Writing Style Training</CardTitle>
-                <p className="text-xs text-muted-foreground font-body">
-                  Upload your best scripts to train the AI to write in your voice.
-                  Accepted: .txt, .docx, .pdf · Max 10MB · Min 100 words
-                </p>
+                <p className="text-xs text-muted-foreground font-body">Upload your best scripts. Accepted: .txt, .docx, .pdf · Max 10MB · Min 100 words</p>
               </CardHeader>
               <CardContent className="space-y-5">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-semibold font-body">Training Progress</span>
-                    <span className="text-xs font-mono text-foreground">
-                      {trainingProgress}/{MAX_SCRIPTS} scripts
-                    </span>
+                    <span className="text-xs font-mono text-foreground">{trainingProgress}/{MAX_SCRIPTS} scripts</span>
                   </div>
                   <Progress value={(trainingProgress / MAX_SCRIPTS) * 100} className="h-2" />
-                  {trainingProgress < 5 && (
-                    <p className="text-[11px] text-warning mt-1.5 font-body">
-                      Upload at least 5 scripts to enable AI drafting
-                    </p>
-                  )}
+                  {trainingProgress < 5 && <p className="text-[11px] text-warning mt-1.5 font-body">Upload at least 5 scripts to enable AI drafting</p>}
                 </div>
-
                 <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    accept=".txt,.docx,.pdf"
-                    className="hidden"
-                    onChange={handleFileUpload}
-                  />
+                  <input type="file" accept=".txt,.docx,.pdf" className="hidden" onChange={handleFileUpload} />
                   <div className="flex items-center justify-center w-full h-10 rounded-md border border-input bg-background hover:bg-accent transition-colors text-sm font-body">
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload Script (.txt, .docx, .pdf)
+                    <Upload className="mr-2 h-4 w-4" /> Upload Script (.txt, .docx, .pdf)
                   </div>
                 </label>
-
                 <div className="space-y-2">
-                  {scripts.map((script) => (
-                    <div
-                      key={script.id}
-                      className="flex items-center justify-between p-3 rounded bg-muted"
-                    >
+                  {scriptsLoading ? [1,2].map(i => <Skeleton key={i} className="h-12 w-full" />) : (scripts ?? []).map((script) => (
+                    <div key={script.id} className="flex items-center justify-between p-3 rounded bg-muted">
                       <div className="flex items-center gap-3">
                         {statusIcon(script.status)}
                         <div>
-                          <p className="text-sm font-semibold font-body">{script.fileName}</p>
-                          <p className="text-[10px] text-muted-foreground font-body">
-                            {script.fileSize} · Uploaded {script.uploadedAt}
-                          </p>
+                          <p className="text-sm font-semibold font-body">{script.file_name}</p>
+                          <p className="text-[10px] text-muted-foreground font-body">{script.file_size} · Uploaded {new Date(script.uploaded_at).toLocaleDateString()}</p>
                         </div>
                       </div>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-7 w-7 text-destructive hover:text-destructive"
-                        onClick={() => handleRemoveScript(script.id)}
-                      >
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteScript.mutate({ id: script.id, storagePath: script.storage_path })}>
                         <Trash2 className="h-3 w-3" />
                       </Button>
                     </div>
@@ -268,22 +147,16 @@ const Settings = () => {
           </div>
         </TabsContent>
 
-        {/* Content Length Preference Tab */}
         <TabsContent value="content">
           <Card>
             <CardHeader>
               <CardTitle className="text-base font-serif">Content Length Preferences</CardTitle>
-              <p className="text-xs text-muted-foreground font-body">
-                Set your default AI draft length. You can override this per individual draft.
-              </p>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="space-y-2">
                 <Label className="font-body">Default Draft Length</Label>
-                <Select value={defaultLength} onValueChange={(v) => setDefaultLength(v as "short" | "medium" | "long")}>
-                  <SelectTrigger className="w-56">
-                    <SelectValue />
-                  </SelectTrigger>
+                <Select value={p?.default_length ?? "medium"} onValueChange={(v) => setLocalPrefs({ ...p, default_length: v })}>
+                  <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="short">Short (up to 280 chars)</SelectItem>
                     <SelectItem value="medium">Medium (280–500 chars)</SelectItem>
@@ -291,158 +164,66 @@ const Settings = () => {
                   </SelectContent>
                 </Select>
               </div>
-
-              <div className="p-4 rounded bg-muted space-y-2">
-                <p className="text-sm font-semibold font-body">Length Guide</p>
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { label: "Short", desc: "Single tweet, up to 280 characters", chars: "≤280" },
-                    { label: "Medium", desc: "Extended tweet or thread opener", chars: "280–500" },
-                    { label: "Long", desc: "Thread or detailed analysis", chars: "500–1000" },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className={`p-3 rounded border text-center transition-colors ${
-                        defaultLength === item.label.toLowerCase()
-                          ? "border-foreground bg-background"
-                          : "border-border"
-                      }`}
-                    >
-                      <p className="text-sm font-semibold font-body">{item.label}</p>
-                      <p className="text-[10px] text-muted-foreground font-mono mt-1">{item.chars}</p>
-                      <p className="text-[11px] text-muted-foreground font-body mt-1">{item.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <Button onClick={() => toast.success("Content preferences saved!")} className="font-body">
-                Save Preferences
-              </Button>
+              <Button onClick={() => updatePrefs.mutate({ default_length: localPrefs?.default_length ?? p?.default_length })} className="font-body">Save Preferences</Button>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Delivery Tab */}
         <TabsContent value="delivery">
           <Card>
             <CardHeader>
               <CardTitle className="text-base font-serif">Daily Digest Delivery</CardTitle>
-              <p className="text-xs text-muted-foreground font-body">
-                Configure when you receive your daily briefing
-              </p>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold font-body">Enable Daily Digest</p>
-                  <p className="text-xs text-muted-foreground font-body">Receive a daily summary of top trending topics</p>
+                  <p className="text-xs text-muted-foreground font-body">Receive a daily summary</p>
                 </div>
-                <Switch checked={digestEnabled} onCheckedChange={setDigestEnabled} />
+                <Switch checked={p?.digest_enabled ?? true} onCheckedChange={(v) => { setLocalPrefs({ ...p, digest_enabled: v }); updatePrefs.mutate({ digest_enabled: v }); }} />
               </div>
-
-              {digestEnabled && (
-                <>
-                  <div className="space-y-2">
-                    <Label className="font-body">Delivery Time</Label>
-                    <Input
-                      type="time"
-                      value={deliveryTime}
-                      onChange={(e) => setDeliveryTime(e.target.value)}
-                      className="w-40"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="font-body">Delivery Days</Label>
-                    <div className="flex gap-2">
-                      {Object.entries(deliveryDays).map(([day, active]) => (
-                        <Button
-                          key={day}
-                          size="sm"
-                          variant={active ? "default" : "outline"}
-                          className="text-xs h-8 w-10 font-body"
-                          onClick={() =>
-                            setDeliveryDays((prev) => ({ ...prev, [day]: !prev[day as keyof typeof prev] }))
-                          }
-                        >
-                          {day}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                </>
+              {(p?.digest_enabled ?? true) && (
+                <div className="space-y-2">
+                  <Label className="font-body">Delivery Time</Label>
+                  <Input type="time" value={p?.digest_time ?? "10:00"} onChange={(e) => setLocalPrefs({ ...p, digest_time: e.target.value })} className="w-40" />
+                </div>
               )}
-
-              <Button onClick={() => toast.success("Delivery schedule saved!")} className="font-body">
-                Save Schedule
-              </Button>
+              <Button onClick={() => updatePrefs.mutate({ digest_time: localPrefs?.digest_time ?? p?.digest_time })} className="font-body">Save Schedule</Button>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Twitter Tab */}
         <TabsContent value="twitter">
           <Card>
             <CardHeader>
               <CardTitle className="text-base font-serif">Twitter/X Connection</CardTitle>
-              <p className="text-xs text-muted-foreground font-body">
-                Connect your personal Twitter account for publishing
-              </p>
+              <p className="text-xs text-muted-foreground font-body">Connect your Twitter account for publishing</p>
             </CardHeader>
             <CardContent className="space-y-4">
-              {twitterConnected ? (
+              {p?.twitter_connected ? (
                 <div className="flex items-center justify-between p-4 rounded bg-muted">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-foreground flex items-center justify-center">
-                      <Twitter className="h-5 w-5 text-background" />
-                    </div>
+                    <div className="h-10 w-10 rounded-full bg-foreground flex items-center justify-center"><Twitter className="h-5 w-5 text-background" /></div>
                     <div>
-                      <p className="text-sm font-semibold font-body">@JaneReporter</p>
+                      <p className="text-sm font-semibold font-body">{p?.twitter_handle || "@YourHandle"}</p>
                       <p className="text-xs text-muted-foreground font-body">Connected via OAuth 2.0</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-[10px] bg-success/10 text-success border-success/30">
-                      <CheckCircle className="mr-1 h-3 w-3" /> Connected
-                    </Badge>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="text-xs text-destructive border-destructive/30 hover:bg-destructive/10 font-body"
-                      onClick={() => {
-                        setTwitterConnected(false);
-                        toast.info("Twitter disconnected.");
-                      }}
-                    >
-                      Disconnect
-                    </Button>
-                  </div>
+                  <Badge variant="outline" className="text-[10px] bg-success/10 text-success border-success/30"><CheckCircle className="mr-1 h-3 w-3" /> Connected</Badge>
                 </div>
               ) : (
-                <Button
-                  className="w-full font-body"
-                  onClick={() => {
-                    setTwitterConnected(true);
-                    toast.success("Twitter account connected!");
-                  }}
-                >
-                  <Link className="mr-2 h-4 w-4" />
-                  Connect Twitter Account
+                <Button className="w-full font-body" onClick={() => { updatePrefs.mutate({ twitter_connected: true }); toast.success("Twitter connected!"); }}>
+                  <Link className="mr-2 h-4 w-4" /> Connect Twitter Account
                 </Button>
               )}
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Notifications Tab */}
         <TabsContent value="notifications">
           <Card>
             <CardHeader>
               <CardTitle className="text-base font-serif">Notification Preferences</CardTitle>
-              <p className="text-xs text-muted-foreground font-body">
-                Control how and when you receive alerts
-              </p>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="flex items-center justify-between">
@@ -450,96 +231,30 @@ const Settings = () => {
                   <p className="text-sm font-semibold font-body">In-App Notifications</p>
                   <p className="text-xs text-muted-foreground font-body">Show notifications inside the platform</p>
                 </div>
-                <Switch checked={inAppAlerts} onCheckedChange={setInAppAlerts} />
+                <Switch checked={p?.in_app_alerts ?? true} onCheckedChange={(v) => { setLocalPrefs({ ...p, in_app_alerts: v }); updatePrefs.mutate({ in_app_alerts: v }); }} />
               </div>
-
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold font-body">Email Notifications</p>
                   <p className="text-xs text-muted-foreground font-body">Receive alerts via email</p>
                 </div>
-                <Switch checked={emailAlerts} onCheckedChange={setEmailAlerts} />
+                <Switch checked={p?.email_alerts ?? true} onCheckedChange={(v) => { setLocalPrefs({ ...p, email_alerts: v }); updatePrefs.mutate({ email_alerts: v }); }} />
               </div>
-
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold font-body">Real-Time Trend Alerts</p>
                   <p className="text-xs text-muted-foreground font-body">Get notified instantly for high-engagement topics</p>
                 </div>
-                <Switch checked={trendAlerts} onCheckedChange={setTrendAlerts} />
+                <Switch checked={p?.trend_alerts ?? true} onCheckedChange={(v) => { setLocalPrefs({ ...p, trend_alerts: v }); updatePrefs.mutate({ trend_alerts: v }); }} />
               </div>
-
-              {/* Significance Threshold - Req 13.4 */}
               <div className="space-y-3 p-4 rounded bg-muted">
                 <div>
                   <p className="text-sm font-semibold font-body">Alert Significance Threshold</p>
-                  <p className="text-xs text-muted-foreground font-body">
-                    Only alert when topics exceed this score ({alertThreshold[0]}/100)
-                  </p>
+                  <p className="text-xs text-muted-foreground font-body">Only alert when topics exceed this score ({p?.alert_threshold ?? 70}/100)</p>
                 </div>
-                <Slider
-                  value={alertThreshold}
-                  onValueChange={setAlertThreshold}
-                  min={10}
-                  max={100}
-                  step={5}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
-                  <span>10 (Most alerts)</span>
-                  <span>100 (Critical only)</span>
-                </div>
+                <Slider value={[p?.alert_threshold ?? 70]} onValueChange={(v) => { setLocalPrefs({ ...p, alert_threshold: v[0] }); }} min={10} max={100} step={5} className="w-full" />
               </div>
-
-              <div className="space-y-2">
-                <Label className="font-body">Notification Frequency</Label>
-                <Select value={notifFrequency} onValueChange={(v) => setNotifFrequency(v as "immediate" | "hourly" | "daily")}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="immediate">Immediate</SelectItem>
-                    <SelectItem value="hourly">Hourly Digest</SelectItem>
-                    <SelectItem value="daily">Daily Digest</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-3 p-4 rounded bg-muted">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold font-body">Quiet Hours</p>
-                    <p className="text-xs text-muted-foreground font-body">No notifications during these hours</p>
-                  </div>
-                  <Switch checked={quietHoursEnabled} onCheckedChange={setQuietHoursEnabled} />
-                </div>
-                {quietHoursEnabled && (
-                  <div className="flex items-center gap-3">
-                    <div className="space-y-1">
-                      <Label className="text-xs font-body">From</Label>
-                      <Input
-                        type="time"
-                        value={quietStart}
-                        onChange={(e) => setQuietStart(e.target.value)}
-                        className="w-32"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs font-body">To</Label>
-                      <Input
-                        type="time"
-                        value={quietEnd}
-                        onChange={(e) => setQuietEnd(e.target.value)}
-                        className="w-32"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <Button onClick={() => toast.success("Notification preferences saved!")} className="font-body">
-                Save Preferences
-              </Button>
+              <Button onClick={() => updatePrefs.mutate({ alert_threshold: localPrefs?.alert_threshold ?? p?.alert_threshold })} className="font-body">Save Preferences</Button>
             </CardContent>
           </Card>
         </TabsContent>
