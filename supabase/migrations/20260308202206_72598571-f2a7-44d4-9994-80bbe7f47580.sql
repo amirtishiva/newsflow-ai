@@ -1,0 +1,5 @@
+INSERT INTO trending_topics (user_id, title, summary, source, source_handle, significance_score, engagement)
+VALUES 
+('7acba5e4-41c9-4cf4-95de-96ff786585f5', 'AI Regulation Bill Passes Senate Committee', 'The US Senate Commerce Committee has approved a landmark AI regulation bill requiring transparency reports from major AI companies, setting the stage for a full floor vote.', 'twitter', '@Reuters', 85, 12500),
+('7acba5e4-41c9-4cf4-95de-96ff786585f5', 'SpaceX Starship Completes First Orbital Refueling Test', 'SpaceX successfully demonstrated orbital refueling between two Starship vehicles, a critical milestone for NASA Artemis lunar missions.', 'rss', 'TechCrunch', 78, 8900),
+('7acba5e4-41c9-4cf4-95de-96ff786585f5', 'Global Chip Shortage Expected to Ease by Q4 2026', 'Industry analysts predict semiconductor supply chain constraints will normalize by late 2026 as new fabrication facilities come online in the US, EU, and Japan.', 'twitter', '@Bloomberg', 72, 6300);
