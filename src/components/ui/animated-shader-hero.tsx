@@ -65,16 +65,21 @@ void main(void) {
     uv+=.1*cos(i*vec2(.1+.01*i, .8)+i*i+T*.5+.1*uv.x);
     vec2 p=uv;
     float d=length(p);
-    float glow=.00125/d*2.0;
+    float glow=.0025/d;
     col+=vec3(glow);
     float b=noise(i+p+bg*1.731);
-    col+=vec3(.002*b/length(max(p,vec2(b*p.x*.02,p.y))));
-    float fade=smoothstep(0.0,1.5,d);
-    col=mix(col,vec3(bg*.18),fade);
+    col+=vec3(.004*b/length(max(p,vec2(b*p.x*.02,p.y))));
+    float fade=smoothstep(0.0,1.8,d);
+    col=mix(col,vec3(bg*.28),fade);
   }
   float lum=dot(col,vec3(0.299,0.587,0.114));
-  col=vec3(lum)*1.1;
-  col=clamp(col,0.0,1.0);
+  // Contrast curve: lift shadows, compress highlights
+  lum=smoothstep(-0.05,0.85,lum);
+  // Slight brightness boost
+  lum=pow(lum,0.8)*1.3;
+  // Add subtle warm-neutral tint for editorial depth
+  vec3 tinted=vec3(lum*1.0, lum*0.98, lum*0.95);
+  col=clamp(tinted,0.0,1.0);
   O=vec4(col,1);
 }`;
 
