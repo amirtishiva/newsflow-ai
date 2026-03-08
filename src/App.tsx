@@ -13,6 +13,7 @@ import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
 import ResearchReport from "./pages/ResearchReport";
 import ActivityLog from "./pages/ActivityLog";
+import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -46,6 +47,7 @@ const App = () => (
           <Route path="/activity-log" element={<AppLayout><ActivityLog /></AppLayout>} />
           <Route path="/notifications" element={<AppLayout><Notifications /></AppLayout>} />
           <Route path="/settings" element={<AppLayout><Settings /></AppLayout>} />
+          <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
