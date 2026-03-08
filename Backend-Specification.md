@@ -1016,8 +1016,8 @@ SELECT cron.schedule(
   '* * * * *',
   $$
   SELECT net.http_post(
-    url := 'https://<PROJECT_REF>.supabase.co/functions/v1/send-digest',
-    headers := '{"Content-Type": "application/json", "Authorization": "Bearer <SERVICE_ROLE_KEY>"}'::jsonb,
+    url := 'https://utneimavxjfgiqwbuufs.supabase.co/functions/v1/send-digest',
+    headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key')),
     body := concat('{"time": "', now(), '"}')::jsonb
   ) AS request_id;
   $$
