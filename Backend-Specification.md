@@ -42,7 +42,7 @@
 └─────────────────────────────────────────────────────┘
            │
      External APIs
-  (Twitter/X, RSS, YouTube, OpenAI)
+  (Twitter/X, RSS, YouTube, Google Gemini)
 ```
 
 **Key Principles:**
