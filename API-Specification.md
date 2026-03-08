@@ -28,12 +28,11 @@
 ### Client Setup
 
 ```typescript
-import { createClient } from '@supabase/supabase-js';
+// Use the auto-generated client — do NOT create manually
+import { supabase } from "@/integrations/supabase/client";
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+// Project: utneimavxjfgiqwbuufs
+// URL: https://utneimavxjfgiqwbuufs.supabase.co
 ```
 
 ### Patterns
