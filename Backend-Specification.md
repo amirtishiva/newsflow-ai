@@ -794,7 +794,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 | Purpose | Generate a deep-dive research report for a topic |
 | Auth | JWT required |
 | Method | POST |
-| Secrets | `OPENAI_API_KEY` |
+| Secrets | `GEMINI_API_KEY` |
 
 **Input:**
 ```json
