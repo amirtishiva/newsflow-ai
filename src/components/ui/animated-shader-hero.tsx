@@ -65,7 +65,7 @@ void main(void) {
     uv+=.1*cos(i*vec2(.1+.01*i, .8)+i*i+T*.5+.1*uv.x);
     vec2 p=uv;
     float d=length(p);
-    float glow=.00125/d*2.0;
+    float glow=.0004/d;
     col+=vec3(glow);
     float b=noise(i+p+bg*1.731);
     col+=vec3(.002*b/length(max(p,vec2(b*p.x*.02,p.y))));
@@ -73,7 +73,7 @@ void main(void) {
     col=mix(col,vec3(bg*.18),fade);
   }
   float lum=dot(col,vec3(0.299,0.587,0.114));
-  col=vec3(lum)*1.1;
+  col=vec3(lum)*0.6;
   col=clamp(col,0.0,1.0);
   O=vec4(col,1);
 }`;
@@ -201,7 +201,7 @@ const Hero: React.FC<HeroProps> = ({
 
         <div className="max-w-4xl space-y-6">
           {/* Headline */}
-          <h1 className="font-serif tracking-tight">
+          <h1 className="font-mono tracking-tight uppercase">
             <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white animate-fade-in">
               {headline.line1}
             </span>
