@@ -4,7 +4,7 @@
 
 - Always in plan mode to make a plan
 
-- After get the plan, make sure you Write the plan to .claude/tasks/TASK_NAME.md.
+- After get the plan, make sure you Write the plan to .newsflow/tasks/TASK_NAME.md.
 
 - The plan should be a detailed implementation plan and the reasoning behind them, as well as tasks broken down.
 
