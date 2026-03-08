@@ -30,6 +30,8 @@ const App = () => (
             <Route path="/drafts" element={<AIDrafts />} />
             <Route path="/published" element={<Published />} />
             <Route path="/sources" element={<Sources />} />
+            <Route path="/research/:topicId" element={<ResearchReport />} />
+            <Route path="/activity-log" element={<ActivityLog />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />

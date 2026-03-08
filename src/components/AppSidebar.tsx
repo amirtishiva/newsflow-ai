@@ -36,6 +36,7 @@ const mainNav = [
 
 const manageNav = [
   { title: "Sources", url: "/sources", icon: Database },
+  { title: "Activity Log", url: "/activity-log", icon: Shield },
   { title: "Notifications", url: "/notifications", icon: Bell, badge: 3 },
   { title: "Settings", url: "/settings", icon: Settings },
 ];

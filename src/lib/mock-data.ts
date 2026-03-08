@@ -112,3 +112,101 @@ export function formatEngagement(num: number): string {
   if (num >= 1000) return (num / 1000).toFixed(1) + "K";
   return num.toString();
 }
+
+export interface ResearchReport {
+  topicId: string;
+  significanceScore: number;
+  generatedAt: string;
+  summary: string;
+  keyFacts: string[];
+  timeline: { time: string; description: string }[];
+  quotes: { text: string; author: string; source: string }[];
+  sources: { title: string; publisher: string; url: string }[];
+}
+
+export interface ActivityLog {
+  id: string;
+  eventType: string;
+  reporter: string;
+  details: string;
+  timestamp: string;
+}
+
+export const mockResearchReports: ResearchReport[] = [
+  {
+    topicId: "t1",
+    significanceScore: 94,
+    generatedAt: "12 min ago",
+    summary:
+      "The Supreme Court issued a 6-3 landmark ruling expanding digital privacy protections, establishing that digital footprints carry Fourth Amendment protections equivalent to physical property. This decision could fundamentally reshape how technology companies collect, store, and monetize user data, with far-reaching implications for the $200B+ data brokerage industry.",
+    keyFacts: [
+      "6-3 ruling with Justice Roberts writing the majority opinion",
+      "Digital footprints now carry the same Fourth Amendment protections as physical property",
+      "Tech companies must obtain explicit opt-in consent before collecting behavioral data",
+      "The ruling affects an estimated $200B+ data brokerage industry",
+      "Implementation deadline set for 18 months from ruling date",
+    ],
+    timeline: [
+      { time: "6 months ago", description: "Case filed by ACLU on behalf of privacy advocates" },
+      { time: "3 months ago", description: "Oral arguments heard by the Supreme Court" },
+      { time: "1 week ago", description: "Leaked draft opinion circulated among legal scholars" },
+      { time: "Today, 10:32 AM", description: "Official ruling published by the Supreme Court" },
+      { time: "Today, 11:15 AM", description: "Major tech companies issue initial responses" },
+    ],
+    quotes: [
+      { text: "This ruling brings the Fourth Amendment into the digital age.", author: "Chief Justice Roberts", source: "Majority Opinion" },
+      { text: "The era of unchecked data harvesting is over.", author: "ACLU Director", source: "Press Conference" },
+      { text: "We will comply fully and support user privacy.", author: "Tech Industry Coalition", source: "Joint Statement" },
+    ],
+    sources: [
+      { title: "Supreme Court Opinion No. 23-1847", publisher: "supremecourt.gov", url: "#" },
+      { title: "Analysis: What the Ruling Means for Big Tech", publisher: "Reuters", url: "#" },
+      { title: "Privacy Ruling Live Updates", publisher: "SCOTUSblog", url: "#" },
+    ],
+  },
+  {
+    topicId: "t3",
+    significanceScore: 91,
+    generatedAt: "1 hr ago",
+    summary:
+      "SpaceX successfully demonstrated orbital refueling between two Starship vehicles in low Earth orbit, a critical milestone for NASA's Artemis lunar program and future Mars missions. The operation transferred approximately 10 metric tons of liquid oxygen and methane between vehicles over a 45-minute window.",
+    keyFacts: [
+      "First successful orbital propellant transfer between two Starship vehicles",
+      "Approximately 10 metric tons of propellant transferred over 45 minutes",
+      "Critical milestone for NASA Artemis III lunar landing mission",
+      "SpaceX received $3.4B NASA contract dependent on this capability",
+      "Enables deep space missions requiring multiple refueling stops",
+    ],
+    timeline: [
+      { time: "2 years ago", description: "SpaceX awarded $3.4B Artemis HLS contract by NASA" },
+      { time: "6 months ago", description: "First Starship orbital test flight successful" },
+      { time: "Yesterday", description: "Two Starship vehicles launched 4 hours apart" },
+      { time: "Today, 08:47 UTC", description: "Vehicles achieved orbital rendezvous" },
+      { time: "Today, 09:32 UTC", description: "Propellant transfer completed successfully" },
+    ],
+    quotes: [
+      { text: "This changes everything for deep space exploration.", author: "Elon Musk", source: "X/Twitter" },
+      { text: "A giant leap toward sustainable space infrastructure.", author: "NASA Administrator", source: "Press Briefing" },
+    ],
+    sources: [
+      { title: "SpaceX Starship Refueling Mission Report", publisher: "SpaceX", url: "#" },
+      { title: "NASA Artemis Program Update", publisher: "NASA.gov", url: "#" },
+      { title: "Orbital Refueling: Technical Analysis", publisher: "Ars Technica", url: "#" },
+    ],
+  },
+];
+
+export const mockActivityLogs: ActivityLog[] = [
+  { id: "al1", eventType: "auth_login", reporter: "Jane Reporter", details: "Logged in from Chrome on macOS", timestamp: "2026-03-08 09:15" },
+  { id: "al2", eventType: "draft_approved", reporter: "Jane Reporter", details: 'Approved draft "Supreme Court Rules on Digital Privacy Rights"', timestamp: "2026-03-08 09:22" },
+  { id: "al3", eventType: "post_published", reporter: "Jane Reporter", details: 'Published to @JaneReporter: "BREAKING: Supreme Court expands digital privacy..."', timestamp: "2026-03-08 09:23" },
+  { id: "al4", eventType: "source_added", reporter: "Jane Reporter", details: "Added Twitter source @BBCBreaking", timestamp: "2026-03-08 08:45" },
+  { id: "al5", eventType: "script_uploaded", reporter: "Jane Reporter", details: "Uploaded training script: social_media_threads.txt (156 KB)", timestamp: "2026-03-01 14:30" },
+  { id: "al6", eventType: "draft_rejected", reporter: "Jane Reporter", details: 'Rejected draft "WHO Pandemic Framework Analysis"', timestamp: "2026-03-07 16:10" },
+  { id: "al7", eventType: "post_deleted", reporter: "Jane Reporter", details: 'Deleted tweet: "DEVELOPING: Cybersecurity breach..."', timestamp: "2026-03-07 11:45" },
+  { id: "al8", eventType: "source_removed", reporter: "Jane Reporter", details: "Removed RSS source: TechCrunch Feed", timestamp: "2026-03-06 09:30" },
+  { id: "al9", eventType: "auth_logout", reporter: "Jane Reporter", details: "Logged out", timestamp: "2026-03-05 18:00" },
+  { id: "al10", eventType: "auth_login", reporter: "Jane Reporter", details: "Logged in from Safari on iOS", timestamp: "2026-03-05 08:12" },
+  { id: "al11", eventType: "draft_approved", reporter: "Jane Reporter", details: 'Approved draft "SpaceX Starship Orbital Refueling"', timestamp: "2026-03-05 10:30" },
+  { id: "al12", eventType: "post_published", reporter: "Jane Reporter", details: 'Published to @JaneReporter: "HISTORIC: SpaceX nails orbital refueling..."', timestamp: "2026-03-05 10:31" },
+];
