@@ -73,7 +73,7 @@ void main(void) {
     col=mix(col,vec3(bg*.18),fade);
   }
   float lum=dot(col,vec3(0.299,0.587,0.114));
-  col=vec3(lum)*1.1;
+  col=vec3(lum)*0.6;
   col=clamp(col,0.0,1.0);
   O=vec4(col,1);
 }`;
