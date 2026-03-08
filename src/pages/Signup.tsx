@@ -61,7 +61,7 @@ const Signup = () => {
           <div>
             <CardTitle className="text-2xl font-serif">Create Account</CardTitle>
             <p className="text-sm text-muted-foreground font-body mt-1">
-              Join NewsFlow AI as a reporter
+              Join News2Flow AI as a reporter
             </p>
           </div>
         </CardHeader>

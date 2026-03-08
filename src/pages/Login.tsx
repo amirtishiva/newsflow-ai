@@ -41,7 +41,7 @@ const Login = () => {
           <div>
             <CardTitle className="text-2xl font-serif">Welcome Back</CardTitle>
             <p className="text-sm text-muted-foreground font-body mt-1">
-              Sign in to your NewsFlow AI account
+              Sign in to your News2Flow AI account
             </p>
           </div>
         </CardHeader>
