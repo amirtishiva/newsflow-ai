@@ -805,7 +805,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 
 **Logic:**
 1. Fetch topic and its source data
-2. Call OpenAI with research synthesis prompt
+2. Call Google Gemini (`gemini-2.5-flash`) with research synthesis prompt
 3. Parse structured output into `key_facts`, `timeline`, `quotes`, `sources`
 4. Insert into `research_reports`
 5. Log activity
