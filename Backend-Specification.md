@@ -1032,7 +1032,7 @@ Stored via Supabase Secrets (Vault), accessed in Edge Functions via `Deno.env.ge
 
 | Secret | Used By | Description |
 |--------|---------|-------------|
-| `OPENAI_API_KEY` | `generate-draft`, `generate-research`, `process-script` | OpenAI GPT-4 API key |
+| `GEMINI_API_KEY` | `generate-draft`, `generate-research`, `process-script` | Google Gemini API key (personal) |
 | `TWITTER_CONSUMER_KEY` | `poll-sources`, `publish-tweet` | Twitter/X API key |
 | `TWITTER_CONSUMER_SECRET` | `poll-sources`, `publish-tweet` | Twitter/X API secret |
 | `TWITTER_ACCESS_TOKEN` | `poll-sources` | App-level Twitter access token |
