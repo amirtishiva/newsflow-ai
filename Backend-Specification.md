@@ -832,7 +832,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 **Logic:**
 1. Download file from storage bucket
 2. Extract text content (parse PDF/DOCX if needed)
-3. Send to OpenAI for style analysis (tone, vocabulary, structure patterns)
+3. Send to Google Gemini for style analysis (tone, vocabulary, structure patterns)
 4. Update `training_scripts.status = 'complete'`
 5. Create notification `training_complete`
 6. Log activity
