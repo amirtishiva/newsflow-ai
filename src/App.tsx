@@ -11,6 +11,8 @@ import Published from "./pages/Published";
 import Sources from "./pages/Sources";
 import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
+import ResearchReport from "./pages/ResearchReport";
+import ActivityLog from "./pages/ActivityLog";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
             <Route path="/drafts" element={<AIDrafts />} />
             <Route path="/published" element={<Published />} />
             <Route path="/sources" element={<Sources />} />
+            <Route path="/research/:topicId" element={<ResearchReport />} />
+            <Route path="/activity-log" element={<ActivityLog />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />

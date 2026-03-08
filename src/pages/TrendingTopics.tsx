@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TrendingUp, Search, Sparkles, ExternalLink } from "lucide-react";
+import { TrendingUp, Search, Sparkles, ExternalLink, FileText } from "lucide-react";
 import { mockTrendingTopics, formatEngagement, sourceIcons } from "@/lib/mock-data";
 import { useNavigate } from "react-router-dom";
 
@@ -84,6 +84,9 @@ const TrendingTopics = () => {
                     </div>
                     <p className="text-sm text-muted-foreground mt-2 font-body">{topic.summary}</p>
                     <div className="flex items-center gap-2 mt-3">
+                      <Button size="sm" variant="outline" className="text-xs h-7 font-body" onClick={() => navigate(`/research/${topic.id}`)}>
+                        <FileText className="mr-1 h-3 w-3" /> Deep Research
+                      </Button>
                       {topic.hasDraft ? (
                         <Button size="sm" variant="outline" className="text-xs h-7 font-body" onClick={() => navigate("/drafts")}>
                           <ExternalLink className="mr-1 h-3 w-3" /> View Draft
