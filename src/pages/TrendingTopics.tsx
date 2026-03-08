@@ -84,6 +84,9 @@ const TrendingTopics = () => {
                     </div>
                     <p className="text-sm text-muted-foreground mt-2 font-body">{topic.summary}</p>
                     <div className="flex items-center gap-2 mt-3">
+                      <Button size="sm" variant="outline" className="text-xs h-7 font-body" onClick={() => navigate(`/research/${topic.id}`)}>
+                        <FileText className="mr-1 h-3 w-3" /> Deep Research
+                      </Button>
                       {topic.hasDraft ? (
                         <Button size="sm" variant="outline" className="text-xs h-7 font-body" onClick={() => navigate("/drafts")}>
                           <ExternalLink className="mr-1 h-3 w-3" /> View Draft
