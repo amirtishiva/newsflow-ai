@@ -20,7 +20,9 @@ import {
   Trash2,
   Link,
   Ruler,
+  GraduationCap,
 } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 import { mockTrainingScripts, type TrainingScript } from "@/lib/mock-data";
 import { toast } from "sonner";
 
@@ -44,6 +46,7 @@ const Settings = () => {
   const [quietStart, setQuietStart] = useState("22:00");
   const [quietEnd, setQuietEnd] = useState("07:00");
   const [digestEnabled, setDigestEnabled] = useState(true);
+  const [alertThreshold, setAlertThreshold] = useState([70]);
 
   const trainingProgress = scripts.filter((s) => s.status === "complete").length;
 
@@ -156,73 +159,113 @@ const Settings = () => {
           </TabsTrigger>
         </TabsList>
 
-        {/* Style Training Tab */}
+        {/* Style Profile Tab - Req 5 */}
         <TabsContent value="training">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base font-serif">AI Writing Style Training</CardTitle>
-              <p className="text-xs text-muted-foreground font-body">
-                Upload your best scripts to train the AI to write in your voice.
-                Accepted: .txt, .docx, .pdf · Max 10MB · Min 100 words
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold font-body">Training Progress</span>
-                  <span className="text-xs font-mono text-foreground">
-                    {trainingProgress}/{MAX_SCRIPTS} scripts
-                  </span>
-                </div>
-                <Progress value={(trainingProgress / MAX_SCRIPTS) * 100} className="h-2" />
-                {trainingProgress < 5 && (
-                  <p className="text-[11px] text-warning mt-1.5 font-body">
-                    Upload at least 5 scripts to enable AI drafting
+          <div className="space-y-4">
+            {/* Style Profile Display */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-serif flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4" /> Style Profile
+                </CardTitle>
+                <p className="text-xs text-muted-foreground font-body">
+                  AI analysis of your writing patterns based on uploaded scripts
+                </p>
+              </CardHeader>
+              <CardContent>
+                {trainingProgress >= 5 ? (
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="p-3 rounded bg-muted text-center">
+                      <p className="text-[10px] font-body uppercase tracking-wider text-muted-foreground">Tone</p>
+                      <p className="text-sm font-semibold font-body mt-1 text-foreground">Authoritative</p>
+                      <p className="text-[10px] text-muted-foreground font-body mt-0.5">Direct, confident phrasing</p>
+                    </div>
+                    <div className="p-3 rounded bg-muted text-center">
+                      <p className="text-[10px] font-body uppercase tracking-wider text-muted-foreground">Vocabulary</p>
+                      <p className="text-sm font-semibold font-body mt-1 text-foreground">Technical</p>
+                      <p className="text-[10px] text-muted-foreground font-body mt-0.5">Industry-specific terms</p>
+                    </div>
+                    <div className="p-3 rounded bg-muted text-center">
+                      <p className="text-[10px] font-body uppercase tracking-wider text-muted-foreground">Structure</p>
+                      <p className="text-sm font-semibold font-body mt-1 text-foreground">Concise</p>
+                      <p className="text-[10px] text-muted-foreground font-body mt-0.5">Short sentences, active voice</p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground font-body text-center py-4">
+                    Upload at least 5 scripts to generate your style profile.
                   </p>
                 )}
-              </div>
+              </CardContent>
+            </Card>
 
-              <label className="cursor-pointer">
-                <input
-                  type="file"
-                  accept=".txt,.docx,.pdf"
-                  className="hidden"
-                  onChange={handleFileUpload}
-                />
-                <div className="flex items-center justify-center w-full h-10 rounded-md border border-input bg-background hover:bg-accent transition-colors text-sm font-body">
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload Script (.txt, .docx, .pdf)
-                </div>
-              </label>
-
-              <div className="space-y-2">
-                {scripts.map((script) => (
-                  <div
-                    key={script.id}
-                    className="flex items-center justify-between p-3 rounded bg-muted"
-                  >
-                    <div className="flex items-center gap-3">
-                      {statusIcon(script.status)}
-                      <div>
-                        <p className="text-sm font-semibold font-body">{script.fileName}</p>
-                        <p className="text-[10px] text-muted-foreground font-body">
-                          {script.fileSize} · Uploaded {script.uploadedAt}
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-7 w-7 text-destructive hover:text-destructive"
-                      onClick={() => handleRemoveScript(script.id)}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+            {/* Training Scripts Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-serif">AI Writing Style Training</CardTitle>
+                <p className="text-xs text-muted-foreground font-body">
+                  Upload your best scripts to train the AI to write in your voice.
+                  Accepted: .txt, .docx, .pdf · Max 10MB · Min 100 words
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-semibold font-body">Training Progress</span>
+                    <span className="text-xs font-mono text-foreground">
+                      {trainingProgress}/{MAX_SCRIPTS} scripts
+                    </span>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  <Progress value={(trainingProgress / MAX_SCRIPTS) * 100} className="h-2" />
+                  {trainingProgress < 5 && (
+                    <p className="text-[11px] text-warning mt-1.5 font-body">
+                      Upload at least 5 scripts to enable AI drafting
+                    </p>
+                  )}
+                </div>
+
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    accept=".txt,.docx,.pdf"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                  <div className="flex items-center justify-center w-full h-10 rounded-md border border-input bg-background hover:bg-accent transition-colors text-sm font-body">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Upload Script (.txt, .docx, .pdf)
+                  </div>
+                </label>
+
+                <div className="space-y-2">
+                  {scripts.map((script) => (
+                    <div
+                      key={script.id}
+                      className="flex items-center justify-between p-3 rounded bg-muted"
+                    >
+                      <div className="flex items-center gap-3">
+                        {statusIcon(script.status)}
+                        <div>
+                          <p className="text-sm font-semibold font-body">{script.fileName}</p>
+                          <p className="text-[10px] text-muted-foreground font-body">
+                            {script.fileSize} · Uploaded {script.uploadedAt}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7 text-destructive hover:text-destructive"
+                        onClick={() => handleRemoveScript(script.id)}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         {/* Content Length Preference Tab */}
@@ -424,6 +467,28 @@ const Settings = () => {
                   <p className="text-xs text-muted-foreground font-body">Get notified instantly for high-engagement topics</p>
                 </div>
                 <Switch checked={trendAlerts} onCheckedChange={setTrendAlerts} />
+              </div>
+
+              {/* Significance Threshold - Req 13.4 */}
+              <div className="space-y-3 p-4 rounded bg-muted">
+                <div>
+                  <p className="text-sm font-semibold font-body">Alert Significance Threshold</p>
+                  <p className="text-xs text-muted-foreground font-body">
+                    Only alert when topics exceed this score ({alertThreshold[0]}/100)
+                  </p>
+                </div>
+                <Slider
+                  value={alertThreshold}
+                  onValueChange={setAlertThreshold}
+                  min={10}
+                  max={100}
+                  step={5}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-[10px] font-mono text-muted-foreground">
+                  <span>10 (Most alerts)</span>
+                  <span>100 (Critical only)</span>
+                </div>
               </div>
 
               <div className="space-y-2">

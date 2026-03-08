@@ -3,21 +3,38 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { TrendingUp, Search, Sparkles, ExternalLink, FileText } from "lucide-react";
-import { mockTrendingTopics, formatEngagement, sourceIcons } from "@/lib/mock-data";
+import { mockTrendingTopics, formatEngagement, sourceIcons, type TrendingTopic } from "@/lib/mock-data";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const TrendingTopics = () => {
   const [filter, setFilter] = useState<string>("all");
   const [search, setSearch] = useState("");
+  const [generateTopic, setGenerateTopic] = useState<TrendingTopic | null>(null);
+  const [draftLength, setDraftLength] = useState<"short" | "medium" | "long">("medium");
   const navigate = useNavigate();
 
-  const filtered = mockTrendingTopics.filter((t) => {
-    const matchesFilter = filter === "all" || t.source === filter;
-    const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
+  const filtered = mockTrendingTopics
+    .filter((t) => {
+      const matchesFilter = filter === "all" || t.source === filter;
+      const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase());
+      return matchesFilter && matchesSearch;
+    })
+    .sort((a, b) => b.significanceScore - a.significanceScore);
+
+  const handleGenerate = () => {
+    if (!generateTopic) return;
+    toast.success(`Generating ${draftLength} draft for "${generateTopic.title}"...`);
+    setGenerateTopic(null);
+    setTimeout(() => {
+      toast.success("Draft generated! Check AI Drafts.");
+      navigate("/drafts");
+    }, 1500);
+  };
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -26,7 +43,7 @@ const TrendingTopics = () => {
           Trending Topics
         </h1>
         <p className="text-sm text-muted-foreground mt-1 font-body">
-          Live feed from all monitored sources
+          Live feed from all monitored sources · Sorted by significance
         </p>
       </div>
 
@@ -97,7 +114,7 @@ const TrendingTopics = () => {
                           <ExternalLink className="mr-1 h-3 w-3" /> View Draft
                         </Button>
                       ) : (
-                        <Button size="sm" className="text-xs h-7 font-body">
+                        <Button size="sm" className="text-xs h-7 font-body" onClick={() => setGenerateTopic(topic)}>
                           <Sparkles className="mr-1 h-3 w-3" /> Generate Draft
                         </Button>
                       )}
@@ -109,6 +126,42 @@ const TrendingTopics = () => {
           );
         })}
       </div>
+
+      {/* Format Selection Dialog - Req 8 */}
+      <Dialog open={!!generateTopic} onOpenChange={() => setGenerateTopic(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="font-serif">Generate AI Draft</DialogTitle>
+          </DialogHeader>
+          {generateTopic && (
+            <div className="space-y-4">
+              <div className="p-3 rounded bg-muted">
+                <p className="text-sm font-serif font-semibold">{generateTopic.title}</p>
+                <p className="text-xs text-muted-foreground font-body mt-1">{generateTopic.summary}</p>
+              </div>
+              <div className="space-y-2">
+                <Label className="font-body">Draft Length</Label>
+                <Select value={draftLength} onValueChange={(v) => setDraftLength(v as "short" | "medium" | "long")}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="short">Short — up to 280 characters (single tweet)</SelectItem>
+                    <SelectItem value="medium">Medium — 280–500 characters (extended tweet)</SelectItem>
+                    <SelectItem value="long">Long — 500–1000 characters (thread/analysis)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setGenerateTopic(null)}>Cancel</Button>
+            <Button onClick={handleGenerate}>
+              <Sparkles className="mr-1 h-4 w-4" /> Generate
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
