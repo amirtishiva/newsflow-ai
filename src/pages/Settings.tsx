@@ -20,7 +20,9 @@ import {
   Trash2,
   Link,
   Ruler,
+  GraduationCap,
 } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 import { mockTrainingScripts, type TrainingScript } from "@/lib/mock-data";
 import { toast } from "sonner";
 
