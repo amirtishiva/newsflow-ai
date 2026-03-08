@@ -46,6 +46,7 @@ const Settings = () => {
   const [quietStart, setQuietStart] = useState("22:00");
   const [quietEnd, setQuietEnd] = useState("07:00");
   const [digestEnabled, setDigestEnabled] = useState(true);
+  const [alertThreshold, setAlertThreshold] = useState([70]);
 
   const trainingProgress = scripts.filter((s) => s.status === "complete").length;
 
