@@ -78,27 +78,57 @@ Deno.serve(async (req) => {
       throw downloadErr;
     }
 
-    // For now, mark as complete (Gemini style analysis would go here)
     const geminiKey = Deno.env.get("GEMINI_API_KEY");
+    let analysisResult: string | null = null;
 
-    if (geminiKey && fileData) {
+    if (fileData) {
       try {
         const text = await fileData.text();
-        // Simple validation - ensure it has enough content
         const wordCount = text.split(/\s+/).filter(Boolean).length;
+
         if (wordCount < 50) {
           await serviceClient
             .from("training_scripts")
             .update({ status: "error" })
             .eq("id", script_id);
-
           return new Response(
             JSON.stringify({ error: "Script too short. Minimum 50 words required." }),
             { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
-      } catch {
-        // Binary file (PDF/DOCX) - just mark as complete for now
+
+        if (geminiKey) {
+          const prompt = `Analyze the following writing sample and extract the author's writing style characteristics. Identify:
+1. Tone (formal, casual, authoritative, conversational, etc.)
+2. Vocabulary level (simple, technical, mixed)
+3. Sentence structure patterns (short/punchy, long/complex, mixed)
+4. Common phrases or rhetorical devices
+5. Overall voice summary (2-3 sentences)
+
+Writing sample:
+${text.slice(0, 8000)}
+
+Return a concise JSON: {"tone":"...","vocabulary":"...","sentence_style":"...","devices":["..."],"voice_summary":"..."}
+Return ONLY valid JSON.`;
+
+          const geminiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { maxOutputTokens: 500, temperature: 0.2 },
+              }),
+            }
+          );
+
+          const geminiData = await geminiRes.json();
+          analysisResult = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+          console.log("Style analysis complete for script:", script_id);
+        }
+      } catch (e) {
+        console.warn("Style analysis failed, marking complete anyway:", e);
       }
     }
 
