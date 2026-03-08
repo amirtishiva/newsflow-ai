@@ -11,8 +11,6 @@ const Landing = () => {
         text: "AI-powered newsroom intelligence",
         icons: [
           <Newspaper key="news" className="h-4 w-4" />,
-          <Zap key="zap" className="h-4 w-4" />,
-          <TrendingUp key="trend" className="h-4 w-4" />,
         ],
       }}
       headline={{
