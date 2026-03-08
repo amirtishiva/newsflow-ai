@@ -13,6 +13,7 @@ import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
 import ResearchReport from "./pages/ResearchReport";
 import ActivityLog from "./pages/ActivityLog";
+import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
