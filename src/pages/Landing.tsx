@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Hero from "@/components/ui/animated-shader-hero";
-import { Newspaper, Zap, TrendingUp } from "lucide-react";
+import { Newspaper } from "lucide-react";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -11,8 +11,6 @@ const Landing = () => {
         text: "AI-powered newsroom intelligence",
         icons: [
           <Newspaper key="news" className="h-4 w-4" />,
-          <Zap key="zap" className="h-4 w-4" />,
-          <TrendingUp key="trend" className="h-4 w-4" />,
         ],
       }}
       headline={{
