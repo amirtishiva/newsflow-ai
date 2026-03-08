@@ -11,6 +11,8 @@ import Published from "./pages/Published";
 import Sources from "./pages/Sources";
 import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
+import ResearchReport from "./pages/ResearchReport";
+import ActivityLog from "./pages/ActivityLog";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
