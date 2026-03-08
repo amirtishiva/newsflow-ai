@@ -1,19 +1,40 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock, Quote, BarChart3, ExternalLink, FileText, Sparkles, TrendingUp, Twitter, Rss, Youtube } from "lucide-react";
+import { ArrowLeft, Clock, Quote, BarChart3, ExternalLink, FileText, Sparkles, TrendingUp, Twitter, Rss, Youtube, Loader2 } from "lucide-react";
 import { useResearchReport, useTopic } from "@/hooks/use-research-report";
 import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const sourceIcons: Record<string, React.ElementType> = { twitter: Twitter, rss: Rss, youtube: Youtube };
 
 const ResearchReport = () => {
   const { topicId } = useParams<{ topicId: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [generating, setGenerating] = useState(false);
 
   const { data: topic, isLoading: topicLoading } = useTopic(topicId);
   const { data: report, isLoading: reportLoading } = useResearchReport(topicId);
+
+  const handleGenerateReport = async () => {
+    if (!topicId) return;
+    setGenerating(true);
+    const { error } = await supabase.functions.invoke("generate-research", {
+      body: { topic_id: topicId },
+    });
+    setGenerating(false);
+    if (error) {
+      toast.error(error.message || "Failed to generate report");
+    } else {
+      queryClient.invalidateQueries({ queryKey: ["research-report", topicId] });
+      toast.success("Research report generated!");
+    }
+  };
 
   if (topicLoading || reportLoading) {
     return (
@@ -46,7 +67,9 @@ const ResearchReport = () => {
         </div>
         <Card><CardContent className="py-12 text-center text-muted-foreground font-body">
           <p className="mb-4">Generate a research report using AI to get deep insights on this topic.</p>
-          <Button className="font-body"><Sparkles className="mr-1 h-4 w-4" /> Generate Research Report</Button>
+          <Button className="font-body" onClick={handleGenerateReport} disabled={generating}>
+            {generating ? <><Loader2 className="mr-1 h-4 w-4 animate-spin" /> Generating...</> : <><Sparkles className="mr-1 h-4 w-4" /> Generate Research Report</>}
+          </Button>
         </CardContent></Card>
       </div>
     );

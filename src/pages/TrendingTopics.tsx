@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { TrendingUp, Search, Sparkles, ExternalLink, FileText, Twitter, Rss, Youtube } from "lucide-react";
+import { TrendingUp, Search, Sparkles, ExternalLink, FileText, Twitter, Rss, Youtube, Loader2 } from "lucide-react";
 import { useTrendingTopics } from "@/hooks/use-trending-topics";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -27,6 +27,7 @@ const TrendingTopics = () => {
   const [search, setSearch] = useState("");
   const [generateTopicId, setGenerateTopicId] = useState<string | null>(null);
   const [draftLength, setDraftLength] = useState<"short" | "medium" | "long">("medium");
+  const [generating, setGenerating] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -41,22 +42,18 @@ const TrendingTopics = () => {
 
   const handleGenerate = async () => {
     if (!generateTopic || !user) return;
-    // Insert draft directly (edge function can be used later with Gemini)
-    const { error } = await supabase.from("ai_drafts").insert({
-      user_id: user.id,
-      topic_id: generateTopic.id,
-      topic_title: generateTopic.title,
-      content: `AI-generated ${draftLength} draft for "${generateTopic.title}": ${generateTopic.summary}`,
-      content_length: draftLength as any,
-      status: "pending" as any,
+    setGenerating(true);
+    const { data, error } = await supabase.functions.invoke("generate-draft", {
+      body: { topic_id: generateTopic.id, content_length: draftLength },
     });
-    if (!error) {
-      await supabase.from("trending_topics").update({ has_draft: true }).eq("id", generateTopic.id);
+    setGenerating(false);
+    if (error) {
+      toast.error(error.message || "Failed to generate draft");
+    } else {
       queryClient.invalidateQueries({ queryKey: ["drafts"] });
       queryClient.invalidateQueries({ queryKey: ["trending-topics"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
       toast.success("Draft generated! Check AI Drafts.");
-    } else {
-      toast.error(error.message);
     }
     setGenerateTopicId(null);
   };
@@ -161,7 +158,9 @@ const TrendingTopics = () => {
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setGenerateTopicId(null)}>Cancel</Button>
-            <Button onClick={handleGenerate}><Sparkles className="mr-1 h-4 w-4" /> Generate</Button>
+            <Button onClick={handleGenerate} disabled={generating}>
+              {generating ? <><Loader2 className="mr-1 h-4 w-4 animate-spin" /> Generating...</> : <><Sparkles className="mr-1 h-4 w-4" /> Generate</>}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
