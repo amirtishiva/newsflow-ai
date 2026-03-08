@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -70,59 +69,55 @@ const Settings = () => {
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-          <SettingsIcon className="h-6 w-6 text-primary" />
+        <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">
           Settings
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-sm text-muted-foreground mt-1 font-body">
           Configure your profile, AI training, and delivery preferences
         </p>
       </div>
 
       <Tabs defaultValue="training">
-        <TabsList className="bg-secondary">
-          <TabsTrigger value="training" className="data-[state=active]:bg-card">
+        <TabsList>
+          <TabsTrigger value="training">
             <FileText className="mr-1 h-3 w-3" /> Style Training
           </TabsTrigger>
-          <TabsTrigger value="delivery" className="data-[state=active]:bg-card">
+          <TabsTrigger value="delivery">
             <Clock className="mr-1 h-3 w-3" /> Delivery
           </TabsTrigger>
-          <TabsTrigger value="twitter" className="data-[state=active]:bg-card">
+          <TabsTrigger value="twitter">
             <Twitter className="mr-1 h-3 w-3" /> Twitter
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="data-[state=active]:bg-card">
+          <TabsTrigger value="notifications">
             <Mail className="mr-1 h-3 w-3" /> Notifications
           </TabsTrigger>
         </TabsList>
 
-        {/* Style Training */}
         <TabsContent value="training">
-          <Card className="bg-card">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-base">AI Writing Style Training</CardTitle>
-              <p className="text-xs text-muted-foreground">
+              <CardTitle className="text-base font-serif">AI Writing Style Training</CardTitle>
+              <p className="text-xs text-muted-foreground font-body">
                 Upload your best scripts to train the AI to write in your voice
               </p>
             </CardHeader>
             <CardContent className="space-y-5">
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">
-                    Training Progress
-                  </span>
-                  <span className="text-xs font-mono text-primary">
+                  <span className="text-sm font-semibold font-body">Training Progress</span>
+                  <span className="text-xs font-mono text-foreground">
                     {trainingProgress}/{maxScripts} scripts
                   </span>
                 </div>
                 <Progress value={(trainingProgress / maxScripts) * 100} className="h-2" />
                 {trainingProgress < 5 && (
-                  <p className="text-[11px] text-warning mt-1.5">
+                  <p className="text-[11px] text-warning mt-1.5 font-body">
                     Upload at least 5 scripts to enable AI drafting
                   </p>
                 )}
               </div>
 
-              <Button onClick={handleUpload} variant="outline" className="w-full">
+              <Button onClick={handleUpload} variant="outline" className="w-full font-body">
                 <Upload className="mr-2 h-4 w-4" />
                 Upload Script (.txt, .docx, .pdf)
               </Button>
@@ -131,13 +126,13 @@ const Settings = () => {
                 {scripts.map((script) => (
                   <div
                     key={script.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-secondary/50"
+                    className="flex items-center justify-between p-3 rounded bg-muted"
                   >
                     <div className="flex items-center gap-3">
                       {statusIcon(script.status)}
                       <div>
-                        <p className="text-sm font-medium">{script.fileName}</p>
-                        <p className="text-[10px] text-muted-foreground">
+                        <p className="text-sm font-semibold font-body">{script.fileName}</p>
+                        <p className="text-[10px] text-muted-foreground font-body">
                           {script.fileSize} · Uploaded {script.uploadedAt}
                         </p>
                       </div>
@@ -157,35 +152,34 @@ const Settings = () => {
           </Card>
         </TabsContent>
 
-        {/* Delivery Schedule */}
         <TabsContent value="delivery">
-          <Card className="bg-card">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-base">Daily Digest Delivery</CardTitle>
-              <p className="text-xs text-muted-foreground">
+              <CardTitle className="text-base font-serif">Daily Digest Delivery</CardTitle>
+              <p className="text-xs text-muted-foreground font-body">
                 Configure when you receive your daily briefing
               </p>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="space-y-2">
-                <Label>Delivery Time</Label>
+                <Label className="font-body">Delivery Time</Label>
                 <Input
                   type="time"
                   value={deliveryTime}
                   onChange={(e) => setDeliveryTime(e.target.value)}
-                  className="w-40 bg-secondary/50"
+                  className="w-40"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Delivery Days</Label>
+                <Label className="font-body">Delivery Days</Label>
                 <div className="flex gap-2">
                   {Object.entries(deliveryDays).map(([day, active]) => (
                     <Button
                       key={day}
                       size="sm"
                       variant={active ? "default" : "outline"}
-                      className={`text-xs h-8 w-10 ${active ? "bg-primary text-primary-foreground" : ""}`}
+                      className="text-xs h-8 w-10 font-body"
                       onClick={() =>
                         setDeliveryDays((prev) => ({ ...prev, [day]: !prev[day as keyof typeof prev] }))
                       }
@@ -196,32 +190,31 @@ const Settings = () => {
                 </div>
               </div>
 
-              <Button onClick={() => toast.success("Delivery schedule saved!")} className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button onClick={() => toast.success("Delivery schedule saved!")} className="font-body">
                 Save Schedule
               </Button>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Twitter Connection */}
         <TabsContent value="twitter">
-          <Card className="bg-card">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-base">Twitter/X Connection</CardTitle>
-              <p className="text-xs text-muted-foreground">
+              <CardTitle className="text-base font-serif">Twitter/X Connection</CardTitle>
+              <p className="text-xs text-muted-foreground font-body">
                 Connect your personal Twitter account for publishing
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
               {twitterConnected ? (
-                <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/50">
+                <div className="flex items-center justify-between p-4 rounded bg-muted">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
-                      <Twitter className="h-5 w-5 text-primary" />
+                    <div className="h-10 w-10 rounded-full bg-foreground flex items-center justify-center">
+                      <Twitter className="h-5 w-5 text-background" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">@JaneReporter</p>
-                      <p className="text-xs text-muted-foreground">Connected via OAuth 2.0</p>
+                      <p className="text-sm font-semibold font-body">@JaneReporter</p>
+                      <p className="text-xs text-muted-foreground font-body">Connected via OAuth 2.0</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -231,7 +224,7 @@ const Settings = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-xs text-destructive border-destructive/30 hover:bg-destructive/10"
+                      className="text-xs text-destructive border-destructive/30 hover:bg-destructive/10 font-body"
                       onClick={() => {
                         setTwitterConnected(false);
                         toast.info("Twitter disconnected.");
@@ -243,7 +236,7 @@ const Settings = () => {
                 </div>
               ) : (
                 <Button
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="w-full font-body"
                   onClick={() => {
                     setTwitterConnected(true);
                     toast.success("Twitter account connected!");
@@ -257,32 +250,31 @@ const Settings = () => {
           </Card>
         </TabsContent>
 
-        {/* Notification Preferences */}
         <TabsContent value="notifications">
-          <Card className="bg-card">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-base">Notification Preferences</CardTitle>
-              <p className="text-xs text-muted-foreground">
+              <CardTitle className="text-base font-serif">Notification Preferences</CardTitle>
+              <p className="text-xs text-muted-foreground font-body">
                 Control how and when you receive alerts
               </p>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium">Email Notifications</p>
-                  <p className="text-xs text-muted-foreground">Receive alerts via email</p>
+                  <p className="text-sm font-semibold font-body">Email Notifications</p>
+                  <p className="text-xs text-muted-foreground font-body">Receive alerts via email</p>
                 </div>
                 <Switch checked={emailAlerts} onCheckedChange={setEmailAlerts} />
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium">Real-Time Trend Alerts</p>
-                  <p className="text-xs text-muted-foreground">Get notified instantly for high-engagement topics</p>
+                  <p className="text-sm font-semibold font-body">Real-Time Trend Alerts</p>
+                  <p className="text-xs text-muted-foreground font-body">Get notified instantly for high-engagement topics</p>
                 </div>
                 <Switch checked={trendAlerts} onCheckedChange={setTrendAlerts} />
               </div>
 
-              <Button onClick={() => toast.success("Notification preferences saved!")} className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button onClick={() => toast.success("Notification preferences saved!")} className="font-body">
                 Save Preferences
               </Button>
             </CardContent>

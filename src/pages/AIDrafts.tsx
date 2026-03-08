@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { FileEdit, CheckCircle, XCircle, Send, Clock, RefreshCw, Pencil } from "lucide-react";
+import { FileEdit, CheckCircle, XCircle, Send, RefreshCw, Pencil } from "lucide-react";
 import { mockDrafts, statusConfig, type AIDraft } from "@/lib/mock-data";
 import { toast } from "sonner";
 
@@ -61,18 +61,17 @@ const AIDrafts = () => {
   return (
     <div className="space-y-6 max-w-5xl">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-          <FileEdit className="h-6 w-6 text-warning" />
+        <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">
           AI Drafts
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-sm text-muted-foreground mt-1 font-body">
           Review, edit, and approve AI-generated content
         </p>
       </div>
 
       <div className="flex items-center gap-3">
         <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="w-44 bg-card">
+          <SelectTrigger className="w-44">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -86,8 +85,8 @@ const AIDrafts = () => {
 
       <div className="space-y-4">
         {filtered.length === 0 && (
-          <Card className="bg-card">
-            <CardContent className="py-12 text-center text-muted-foreground">
+          <Card>
+            <CardContent className="py-12 text-center text-muted-foreground font-body">
               No drafts match this filter.
             </CardContent>
           </Card>
@@ -96,14 +95,14 @@ const AIDrafts = () => {
           const config = statusConfig[draft.status];
           const StatusIcon = config.icon;
           return (
-            <Card key={draft.id} className="bg-card">
+            <Card key={draft.id}>
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-sm font-semibold">
+                    <CardTitle className="text-sm font-serif font-semibold">
                       {draft.topicTitle}
                     </CardTitle>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                    <p className="text-[11px] text-muted-foreground mt-0.5 font-body">
                       Created {draft.createdAt} · Updated {draft.updatedAt}
                     </p>
                   </div>
@@ -120,7 +119,7 @@ const AIDrafts = () => {
                           ? "bg-success/10 text-success border-success/30"
                           : draft.status === "rejected"
                           ? "bg-destructive/10 text-destructive border-destructive/30"
-                          : "bg-primary/10 text-primary border-primary/30"
+                          : "bg-muted text-foreground"
                       }`}
                     >
                       <StatusIcon className="mr-1 h-3 w-3" />
@@ -130,33 +129,33 @@ const AIDrafts = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="p-3 rounded-lg bg-secondary/50 text-sm whitespace-pre-wrap leading-relaxed">
+                <div className="p-3 rounded bg-muted text-sm whitespace-pre-wrap leading-relaxed font-body">
                   {draft.content}
                 </div>
                 <div className="flex items-center gap-2 mt-3">
                   {draft.status === "pending" && (
                     <>
-                      <Button size="sm" className="text-xs h-7 bg-success text-success-foreground hover:bg-success/90" onClick={() => handleApprove(draft.id)}>
+                      <Button size="sm" className="text-xs h-7 bg-success text-success-foreground hover:bg-success/90 font-body" onClick={() => handleApprove(draft.id)}>
                         <CheckCircle className="mr-1 h-3 w-3" /> Approve
                       </Button>
-                      <Button size="sm" variant="outline" className="text-xs h-7 text-destructive border-destructive/30 hover:bg-destructive/10" onClick={() => handleReject(draft.id)}>
+                      <Button size="sm" variant="outline" className="text-xs h-7 text-destructive border-destructive/30 hover:bg-destructive/10 font-body" onClick={() => handleReject(draft.id)}>
                         <XCircle className="mr-1 h-3 w-3" /> Reject
                       </Button>
-                      <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => handleEdit(draft)}>
+                      <Button size="sm" variant="ghost" className="text-xs h-7 font-body" onClick={() => handleEdit(draft)}>
                         <Pencil className="mr-1 h-3 w-3" /> Edit
                       </Button>
-                      <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => handleRegenerate(draft.id)}>
+                      <Button size="sm" variant="ghost" className="text-xs h-7 font-body" onClick={() => handleRegenerate(draft.id)}>
                         <RefreshCw className="mr-1 h-3 w-3" /> Regenerate
                       </Button>
                     </>
                   )}
                   {draft.status === "approved" && (
-                    <Button size="sm" className="text-xs h-7 bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => handlePublish(draft.id)}>
+                    <Button size="sm" className="text-xs h-7 font-body" onClick={() => handlePublish(draft.id)}>
                       <Send className="mr-1 h-3 w-3" /> Publish to Twitter
                     </Button>
                   )}
                   {draft.status === "rejected" && (
-                    <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => handleRegenerate(draft.id)}>
+                    <Button size="sm" variant="ghost" className="text-xs h-7 font-body" onClick={() => handleRegenerate(draft.id)}>
                       <RefreshCw className="mr-1 h-3 w-3" /> Regenerate
                     </Button>
                   )}
@@ -170,13 +169,13 @@ const AIDrafts = () => {
       <Dialog open={!!editDraft} onOpenChange={() => setEditDraft(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Edit Draft</DialogTitle>
+            <DialogTitle className="font-serif">Edit Draft</DialogTitle>
           </DialogHeader>
           <Textarea
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
             rows={10}
-            className="bg-secondary/50 resize-none"
+            className="resize-none font-body"
           />
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDraft(null)}>

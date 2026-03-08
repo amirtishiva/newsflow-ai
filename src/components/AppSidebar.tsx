@@ -6,7 +6,7 @@ import {
   Bell,
   Settings,
   Send,
-  Zap,
+  Newspaper,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -50,15 +50,15 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <Zap className="h-4 w-4 text-primary-foreground" />
+          <div className="flex h-8 w-8 items-center justify-center rounded bg-foreground">
+            <Newspaper className="h-4 w-4 text-background" />
           </div>
           {!collapsed && (
             <div>
-              <h1 className="text-sm font-bold text-foreground tracking-tight">
+              <h1 className="text-sm font-serif font-bold text-foreground tracking-tight">
                 Synthetic
               </h1>
-              <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
+              <p className="text-[10px] font-body text-muted-foreground uppercase tracking-[0.15em]">
                 Content Manager
               </p>
             </div>
@@ -68,7 +68,7 @@ export function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground">
+          <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-body font-semibold">
             Newsroom
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -79,8 +79,8 @@ export function AppSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/"}
-                      className="hover:bg-secondary"
-                      activeClassName="bg-secondary text-primary font-medium"
+                      className="hover:bg-accent font-body"
+                      activeClassName="bg-accent text-foreground font-semibold"
                     >
                       <item.icon className="h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
@@ -93,7 +93,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground">
+          <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-body font-semibold">
             Manage
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -103,8 +103,8 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild isActive={isActive(item.url)}>
                     <NavLink
                       to={item.url}
-                      className="hover:bg-secondary"
-                      activeClassName="bg-secondary text-primary font-medium"
+                      className="hover:bg-accent font-body"
+                      activeClassName="bg-accent text-foreground font-semibold"
                     >
                       <item.icon className="h-4 w-4" />
                       {!collapsed && (
@@ -129,12 +129,12 @@ export function AppSidebar() {
       <SidebarFooter className="p-4">
         {!collapsed && (
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-foreground">
+            <div className="h-8 w-8 rounded-full bg-foreground flex items-center justify-center text-xs font-bold text-background">
               JR
             </div>
             <div>
-              <p className="text-xs font-medium text-foreground">Jane Reporter</p>
-              <p className="text-[10px] text-muted-foreground">Senior Correspondent</p>
+              <p className="text-xs font-semibold text-foreground font-body">Jane Reporter</p>
+              <p className="text-[10px] text-muted-foreground font-body">Senior Correspondent</p>
             </div>
           </div>
         )}
