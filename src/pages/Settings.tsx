@@ -159,11 +159,50 @@ const Settings = () => {
           </TabsTrigger>
         </TabsList>
 
-        {/* Style Training Tab */}
+        {/* Style Profile Tab - Req 5 */}
         <TabsContent value="training">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base font-serif">AI Writing Style Training</CardTitle>
+          <div className="space-y-4">
+            {/* Style Profile Display */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-serif flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4" /> Style Profile
+                </CardTitle>
+                <p className="text-xs text-muted-foreground font-body">
+                  AI analysis of your writing patterns based on uploaded scripts
+                </p>
+              </CardHeader>
+              <CardContent>
+                {trainingProgress >= 5 ? (
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="p-3 rounded bg-muted text-center">
+                      <p className="text-[10px] font-body uppercase tracking-wider text-muted-foreground">Tone</p>
+                      <p className="text-sm font-semibold font-body mt-1 text-foreground">Authoritative</p>
+                      <p className="text-[10px] text-muted-foreground font-body mt-0.5">Direct, confident phrasing</p>
+                    </div>
+                    <div className="p-3 rounded bg-muted text-center">
+                      <p className="text-[10px] font-body uppercase tracking-wider text-muted-foreground">Vocabulary</p>
+                      <p className="text-sm font-semibold font-body mt-1 text-foreground">Technical</p>
+                      <p className="text-[10px] text-muted-foreground font-body mt-0.5">Industry-specific terms</p>
+                    </div>
+                    <div className="p-3 rounded bg-muted text-center">
+                      <p className="text-[10px] font-body uppercase tracking-wider text-muted-foreground">Structure</p>
+                      <p className="text-sm font-semibold font-body mt-1 text-foreground">Concise</p>
+                      <p className="text-[10px] text-muted-foreground font-body mt-0.5">Short sentences, active voice</p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground font-body text-center py-4">
+                    Upload at least 5 scripts to generate your style profile.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Training Scripts Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base font-serif">AI Writing Style Training</CardTitle>
               <p className="text-xs text-muted-foreground font-body">
                 Upload your best scripts to train the AI to write in your voice.
                 Accepted: .txt, .docx, .pdf · Max 10MB · Min 100 words
