@@ -22,11 +22,10 @@ const TrendingTopics = () => {
   return (
     <div className="space-y-6 max-w-5xl">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-          <TrendingUp className="h-6 w-6 text-primary" />
+        <h1 className="text-3xl font-serif font-bold tracking-tight text-foreground">
           Trending Topics
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-sm text-muted-foreground mt-1 font-body">
           Live feed from all monitored sources
         </p>
       </div>
@@ -38,11 +37,11 @@ const TrendingTopics = () => {
             placeholder="Search topics..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-card"
+            className="pl-9"
           />
         </div>
         <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="w-40 bg-card">
+          <SelectTrigger className="w-40">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -58,24 +57,24 @@ const TrendingTopics = () => {
         {filtered.map((topic) => {
           const SourceIcon = sourceIcons[topic.source];
           return (
-            <Card key={topic.id} className="bg-card hover:border-primary/30 transition-colors group">
+            <Card key={topic.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start gap-4">
-                  <div className="mt-1 p-2 rounded-md bg-secondary">
+                  <div className="mt-1 p-2 rounded bg-muted">
                     <SourceIcon className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                        <h3 className="font-serif font-semibold text-sm text-foreground">
                           {topic.title}
                         </h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">
+                        <p className="text-xs text-muted-foreground mt-0.5 font-body">
                           via <span className="font-mono">{topic.sourceHandle}</span> · {topic.timestamp}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-sm font-mono font-bold text-primary">
+                        <span className="text-sm font-mono font-bold text-foreground">
                           {formatEngagement(topic.engagement)}
                         </span>
                         <Badge variant="outline" className="text-[10px] font-mono capitalize">
@@ -83,14 +82,14 @@ const TrendingTopics = () => {
                         </Badge>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-2">{topic.summary}</p>
+                    <p className="text-sm text-muted-foreground mt-2 font-body">{topic.summary}</p>
                     <div className="flex items-center gap-2 mt-3">
                       {topic.hasDraft ? (
-                        <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => navigate("/drafts")}>
+                        <Button size="sm" variant="outline" className="text-xs h-7 font-body" onClick={() => navigate("/drafts")}>
                           <ExternalLink className="mr-1 h-3 w-3" /> View Draft
                         </Button>
                       ) : (
-                        <Button size="sm" className="text-xs h-7 bg-primary text-primary-foreground hover:bg-primary/90">
+                        <Button size="sm" className="text-xs h-7 font-body">
                           <Sparkles className="mr-1 h-3 w-3" /> Generate Draft
                         </Button>
                       )}
