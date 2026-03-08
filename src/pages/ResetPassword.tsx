@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Newspaper, CheckCircle, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const passwordRules = [
   { label: "At least 12 characters", test: (p: string) => p.length >= 12 },
@@ -20,11 +21,27 @@ const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [loading, setLoading] = useState(false);
+  const [ready, setReady] = useState(false);
 
   const allValid = passwordRules.every((r) => r.test(password));
   const passwordsMatch = password === confirmPw && confirmPw.length > 0;
 
-  const handleReset = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Listen for PASSWORD_RECOVERY event
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setReady(true);
+      }
+    });
+    // Also check URL hash for recovery type
+    const hash = window.location.hash;
+    if (hash.includes("type=recovery")) {
+      setReady(true);
+    }
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!allValid) {
       toast.error("Password does not meet all requirements.");
@@ -35,11 +52,14 @@ const ResetPassword = () => {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("Password reset successfully! Please sign in.");
-      navigate("/login");
-    }, 1000);
+    const { error } = await supabase.auth.updateUser({ password });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Password reset successfully! Please sign in.");
+    navigate("/login");
   };
 
   return (

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Newspaper, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const passwordRules = [
   { label: "At least 12 characters", test: (p: string) => p.length >= 12 },
@@ -27,7 +28,7 @@ const Signup = () => {
   const allValid = passwordRules.every((r) => r.test(password));
   const passwordsMatch = password === confirmPw && confirmPw.length > 0;
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !password || !confirmPw) {
       toast.error("Please fill in all fields.");
@@ -42,11 +43,21 @@ const Signup = () => {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("Account created! Please check your email to verify.");
-      navigate("/onboarding");
-    }, 1000);
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: name },
+        emailRedirectTo: window.location.origin,
+      },
+    });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Account created! Please check your email to verify.");
+    navigate("/onboarding");
   };
 
   return (

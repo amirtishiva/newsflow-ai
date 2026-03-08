@@ -4,9 +4,11 @@ import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useUnreadCount } from "@/hooks/use-notifications";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
+  const { data: unreadCount } = useUnreadCount();
 
   return (
     <SidebarProvider>
@@ -32,9 +34,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               onClick={() => navigate("/notifications")}
             >
               <Bell className="h-4 w-4" />
-              <Badge className="absolute -top-1 -right-1 h-4 min-w-4 text-[9px] px-1 flex items-center justify-center">
-                3
-              </Badge>
+              {(unreadCount ?? 0) > 0 && (
+                <Badge className="absolute -top-1 -right-1 h-4 min-w-4 text-[9px] px-1 flex items-center justify-center">
+                  {unreadCount}
+                </Badge>
+              )}
             </Button>
           </header>
           <main className="flex-1 overflow-auto p-6 bg-background">{children}</main>
