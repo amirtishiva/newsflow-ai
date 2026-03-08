@@ -35,13 +35,13 @@ export function useUploadScript() {
         ? `${(file.size / 1024).toFixed(0)} KB`
         : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
 
-      const { error } = await supabase.from("training_scripts").insert({
+      const { data: scriptData, error } = await supabase.from("training_scripts").insert({
         user_id: user!.id,
         file_name: file.name,
         file_size: sizeStr,
         storage_path: storagePath,
         status: "processing" as any,
-      });
+      }).select().single();
       if (error) throw error;
 
       // Log activity
@@ -50,6 +50,11 @@ export function useUploadScript() {
         event_type: "script_uploaded" as any,
         details: `Uploaded training script: ${file.name} (${sizeStr})`,
       });
+
+      // Trigger processing via edge function
+      supabase.functions.invoke("process-script", {
+        body: { script_id: scriptData.id, storage_path: storagePath },
+      }).catch(console.error); // Fire and forget
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["training-scripts"] });
