@@ -6,12 +6,12 @@ export interface Profile {
   id: string;
   full_name: string;
   display_name: string | null;
-  title: string;
-  bio: string;
+  title: string | null;
+  bio: string | null;
   avatar_url: string | null;
-  location: string;
-  website: string;
-  twitter_handle: string;
+  location: string | null;
+  website: string | null;
+  twitter_handle: string | null;
   onboarding_complete: boolean;
   created_at: string;
   updated_at: string;

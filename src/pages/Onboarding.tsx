@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ import {
   Upload,
   Rss,
   Youtube,
+  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -33,13 +34,21 @@ const steps = [
 
 const Onboarding = () => {
   const navigate = useNavigate();
-  const { user, refreshProfile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Profile state
+  // Profile state - pre-populate from existing profile
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
+
+  useEffect(() => {
+    if (profile) {
+      setDisplayName(profile.display_name || profile.full_name || "");
+      setBio(profile.bio || "");
+    }
+  }, [profile]);
 
   // Twitter state
   const [twitterConnected, setTwitterConnected] = useState(false);
@@ -49,7 +58,8 @@ const Onboarding = () => {
   const [sourceInput, setSourceInput] = useState("");
 
   // Training state
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; file?: File }[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   const progress = ((Object.keys(completed).length) / steps.length) * 100;
 
@@ -61,6 +71,33 @@ const Onboarding = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
+      // Upload any training files before finishing
+      if (uploadedFiles.some((f) => f.file)) {
+        setUploading(true);
+        for (const f of uploadedFiles) {
+          if (!f.file) continue;
+          const storagePath = `${user!.id}/${Date.now()}_${f.file.name}`;
+          const { error: uploadError } = await supabase.storage
+            .from("training-scripts")
+            .upload(storagePath, f.file);
+          if (uploadError) {
+            console.error("Upload error:", uploadError);
+            continue;
+          }
+          const sizeStr = f.file.size < 1024 * 1024
+            ? `${(f.file.size / 1024).toFixed(0)} KB`
+            : `${(f.file.size / (1024 * 1024)).toFixed(1)} MB`;
+          await supabase.from("training_scripts").insert({
+            user_id: user!.id,
+            file_name: f.file.name,
+            file_size: sizeStr,
+            storage_path: storagePath,
+            status: "processing" as any,
+          });
+        }
+        setUploading(false);
+      }
+
       // Mark onboarding complete
       if (user) {
         await supabase.from("profiles").update({ onboarding_complete: true }).eq("id", user.id);
@@ -107,11 +144,17 @@ const Onboarding = () => {
     toast.success("Sources saved!");
   };
 
-  const handleUploadFile = async () => {
-    // For onboarding we use a simple mock since real file picker needs input element
-    const fileName = `sample_script_${uploadedFiles.length + 1}.txt`;
-    setUploadedFiles((prev) => [...prev, fileName]);
-    toast.success("Script uploaded!");
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const newFiles = Array.from(files).map((f) => ({ name: f.name, file: f }));
+    setUploadedFiles((prev) => [...prev, ...newFiles]);
+    // Reset file input
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const renderStep = () => {
@@ -196,7 +239,7 @@ const Onboarding = () => {
                 placeholder="@handle, RSS URL, or YouTube channel"
                 value={sourceInput}
                 onChange={(e) => setSourceInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddSource()}
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddSource())}
               />
               <Button onClick={handleAddSource} disabled={!sourceInput.trim()}>
                 Add
@@ -236,15 +279,33 @@ const Onboarding = () => {
               Upload your writing samples (.txt, .docx, .pdf) so the AI can learn your voice.
               Upload at least 5 scripts for best results.
             </p>
-            <Button variant="outline" className="w-full font-body" onClick={handleUploadFile}>
-              <Upload className="mr-2 h-4 w-4" /> Upload Script
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".txt,.docx,.pdf,.doc"
+              multiple
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+            <Button
+              variant="outline"
+              className="w-full font-body"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="mr-2 h-4 w-4" /> Choose Files
             </Button>
             {uploadedFiles.length > 0 && (
               <div className="space-y-1">
                 {uploadedFiles.map((f, i) => (
                   <div key={i} className="flex items-center gap-2 p-2 rounded bg-muted">
                     <FileText className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-sm font-body">{f}</span>
+                    <span className="text-sm font-body flex-1 truncate">{f.name}</span>
+                    <button
+                      onClick={() => removeFile(i)}
+                      className="text-muted-foreground hover:text-destructive transition-colors"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
                   </div>
                 ))}
                 <Button
@@ -253,10 +314,10 @@ const Onboarding = () => {
                   className="font-body mt-2"
                   onClick={() => {
                     markComplete("training");
-                    toast.success("Training scripts saved!");
+                    toast.success("Training scripts ready! They'll be processed when you finish.");
                   }}
                 >
-                  <CheckCircle className="mr-1 h-3 w-3" /> Start Training
+                  <CheckCircle className="mr-1 h-3 w-3" /> Confirm Scripts
                 </Button>
               </div>
             )}
@@ -320,9 +381,9 @@ const Onboarding = () => {
             <Button variant="ghost" size="sm" className="text-muted-foreground font-body" onClick={handleSkip}>
               <SkipForward className="mr-1 h-3 w-3" /> Skip
             </Button>
-            <Button size="sm" className="font-body" onClick={handleNext}>
-              {currentStep === steps.length - 1 ? "Finish" : "Next"}{" "}
-              <ArrowRight className="ml-1 h-3 w-3" />
+            <Button size="sm" className="font-body" onClick={handleNext} disabled={uploading}>
+              {uploading ? "Uploading..." : currentStep === steps.length - 1 ? "Finish" : "Next"}{" "}
+              {!uploading && <ArrowRight className="ml-1 h-3 w-3" />}
             </Button>
           </div>
         </div>
