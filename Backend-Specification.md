@@ -706,7 +706,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 | Purpose | Generate AI draft from a trending topic using user's trained voice |
 | Auth | JWT required (verify in code) |
 | Method | POST |
-| Secrets | `OPENAI_API_KEY` |
+| Secrets | `GEMINI_API_KEY` |
 
 **Input:**
 ```json
