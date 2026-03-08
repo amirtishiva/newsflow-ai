@@ -65,7 +65,7 @@ void main(void) {
     uv+=.1*cos(i*vec2(.1+.01*i, .8)+i*i+T*.5+.1*uv.x);
     vec2 p=uv;
     float d=length(p);
-    float glow=.00125/d*2.0;
+    float glow=.0004/d;
     col+=vec3(glow);
     float b=noise(i+p+bg*1.731);
     col+=vec3(.002*b/length(max(p,vec2(b*p.x*.02,p.y))));
