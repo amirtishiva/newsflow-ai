@@ -8,10 +8,14 @@ import {
   Send,
   Newspaper,
   Shield,
-  User,
+  LogOut,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useUnreadCount } from "@/hooks/use-notifications";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 import {
   Sidebar,
@@ -38,7 +42,7 @@ const mainNav = [
 const manageNav = [
   { title: "Sources", url: "/sources", icon: Database },
   { title: "Activity Log", url: "/activity-log", icon: Shield },
-  { title: "Notifications", url: "/notifications", icon: Bell, badge: 3 },
+  { title: "Notifications", url: "/notifications", icon: Bell, badge: true },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
@@ -46,8 +50,25 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const navigate = useNavigate();
+  const { profile, signOut } = useAuth();
+  const { data: unreadCount } = useUnreadCount();
   const isActive = (path: string) =>
     path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
+
+  const initials = profile?.display_name
+    ? profile.display_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+    : profile?.full_name
+    ? profile.full_name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "??";
+
+  const displayName = profile?.display_name || profile?.full_name || "User";
+  const displayTitle = profile?.title || "Reporter";
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/login");
+  };
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border">
@@ -113,9 +134,9 @@ export function AppSidebar() {
                       {!collapsed && (
                         <span className="flex items-center justify-between w-full">
                           {item.title}
-                          {item.badge && (
+                          {item.badge && (unreadCount ?? 0) > 0 && (
                             <Badge variant="default" className="h-5 min-w-5 text-[10px] px-1.5">
-                              {item.badge}
+                              {unreadCount}
                             </Badge>
                           )}
                         </span>
@@ -129,24 +150,34 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-4 space-y-2">
         {!collapsed && (
-          <NavLink to="/profile" className="flex items-center gap-3 rounded-md p-1 hover:bg-accent transition-colors" activeClassName="bg-accent">
-            <div className="h-8 w-8 rounded-full bg-foreground flex items-center justify-center text-xs font-bold text-background">
-              JR
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-foreground font-body">Jane Reporter</p>
-              <p className="text-[10px] text-muted-foreground font-body">Senior Correspondent</p>
-            </div>
-          </NavLink>
+          <>
+            <NavLink to="/profile" className="flex items-center gap-3 rounded-md p-1 hover:bg-accent transition-colors" activeClassName="bg-accent">
+              <div className="h-8 w-8 rounded-full bg-foreground flex items-center justify-center text-xs font-bold text-background">
+                {initials}
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-foreground font-body">{displayName}</p>
+                <p className="text-[10px] text-muted-foreground font-body">{displayTitle}</p>
+              </div>
+            </NavLink>
+            <Button variant="ghost" size="sm" className="w-full justify-start text-xs text-muted-foreground font-body" onClick={handleSignOut}>
+              <LogOut className="mr-2 h-3 w-3" /> Sign Out
+            </Button>
+          </>
         )}
         {collapsed && (
-          <NavLink to="/profile" className="flex justify-center" activeClassName="">
-            <div className="h-8 w-8 rounded-full bg-foreground flex items-center justify-center text-xs font-bold text-background">
-              JR
-            </div>
-          </NavLink>
+          <div className="space-y-2">
+            <NavLink to="/profile" className="flex justify-center" activeClassName="">
+              <div className="h-8 w-8 rounded-full bg-foreground flex items-center justify-center text-xs font-bold text-background">
+                {initials}
+              </div>
+            </NavLink>
+            <Button variant="ghost" size="icon" className="w-full" onClick={handleSignOut}>
+              <LogOut className="h-3 w-3" />
+            </Button>
+          </div>
         )}
       </SidebarFooter>
     </Sidebar>

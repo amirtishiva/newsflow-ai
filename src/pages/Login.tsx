@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Newspaper, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,19 +15,30 @@ const Login = () => {
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       toast.error("Please fill in all fields.");
       return;
     }
     setLoading(true);
-    // Mock login — will connect to AWS Cognito
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("Logged in successfully!");
-      navigate("/dashboard");
-    }, 1000);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    // Log activity
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase.from("activity_logs").insert({
+        user_id: user.id,
+        event_type: "auth_login" as any,
+        details: `Logged in from ${navigator.userAgent.includes("Chrome") ? "Chrome" : "Browser"}`,
+      });
+    }
+    toast.success("Logged in successfully!");
+    navigate("/dashboard");
   };
 
   return (

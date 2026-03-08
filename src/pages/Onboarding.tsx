@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const steps = [
   { id: "profile", label: "Profile", icon: User },
@@ -31,6 +33,7 @@ const steps = [
 
 const Onboarding = () => {
   const navigate = useNavigate();
+  const { user, refreshProfile } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
 
@@ -54,10 +57,15 @@ const Onboarding = () => {
     setCompleted((prev) => ({ ...prev, [stepId]: true }));
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
+      // Mark onboarding complete
+      if (user) {
+        await supabase.from("profiles").update({ onboarding_complete: true }).eq("id", user.id);
+        await refreshProfile();
+      }
       toast.success("Onboarding complete! Welcome to News2Flow AI.");
       navigate("/dashboard");
     }
@@ -67,6 +75,16 @@ const Onboarding = () => {
     handleNext();
   };
 
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    await supabase.from("profiles").update({
+      display_name: displayName,
+      bio,
+    }).eq("id", user.id);
+    markComplete("profile");
+    toast.success("Profile saved!");
+  };
+
   const handleAddSource = () => {
     if (sourceInput.trim()) {
       setAddedSources((prev) => [...prev, sourceInput.trim()]);
@@ -74,7 +92,23 @@ const Onboarding = () => {
     }
   };
 
-  const handleUploadFile = () => {
+  const handleConfirmSources = async () => {
+    if (!user) return;
+    const sourcesToInsert = addedSources.map((s) => ({
+      user_id: user.id,
+      type: (s.startsWith("@") ? "twitter" : s.startsWith("http") ? "rss" : "youtube") as any,
+      handle: s,
+      label: s,
+    }));
+    if (sourcesToInsert.length > 0) {
+      await supabase.from("monitored_sources").insert(sourcesToInsert);
+    }
+    markComplete("sources");
+    toast.success("Sources saved!");
+  };
+
+  const handleUploadFile = async () => {
+    // For onboarding we use a simple mock since real file picker needs input element
     const fileName = `sample_script_${uploadedFiles.length + 1}.txt`;
     setUploadedFiles((prev) => [...prev, fileName]);
     toast.success("Script uploaded!");
@@ -109,10 +143,7 @@ const Onboarding = () => {
                 size="sm"
                 variant="outline"
                 className="font-body"
-                onClick={() => {
-                  markComplete("profile");
-                  toast.success("Profile saved!");
-                }}
+                onClick={handleSaveProfile}
               >
                 <CheckCircle className="mr-1 h-3 w-3" /> Save Profile
               </Button>
@@ -189,10 +220,7 @@ const Onboarding = () => {
                   size="sm"
                   variant="outline"
                   className="font-body mt-2"
-                  onClick={() => {
-                    markComplete("sources");
-                    toast.success("Sources saved!");
-                  }}
+                  onClick={handleConfirmSources}
                 >
                   <CheckCircle className="mr-1 h-3 w-3" /> Confirm Sources
                 </Button>
