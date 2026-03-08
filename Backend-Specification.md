@@ -819,7 +819,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 | Purpose | Analyze uploaded training script to extract writing style features |
 | Auth | Service role (triggered after upload) |
 | Method | POST |
-| Secrets | `OPENAI_API_KEY` |
+| Secrets | `GEMINI_API_KEY` |
 
 **Input:**
 ```json
