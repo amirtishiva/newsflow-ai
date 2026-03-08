@@ -6,6 +6,7 @@ export interface TrendingTopic {
   source: "twitter" | "rss" | "youtube";
   sourceHandle: string;
   engagement: number;
+  significanceScore: number;
   timestamp: string;
   summary: string;
   hasDraft: boolean;
