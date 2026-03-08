@@ -1,0 +1,37 @@
+import { useNavigate } from "react-router-dom";
+import Hero from "@/components/ui/animated-shader-hero";
+import { Newspaper, Zap, TrendingUp } from "lucide-react";
+
+const Landing = () => {
+  const navigate = useNavigate();
+
+  return (
+    <Hero
+      trustBadge={{
+        text: "AI-powered newsroom intelligence",
+        icons: [
+          <Newspaper key="news" className="h-4 w-4" />,
+          <Zap key="zap" className="h-4 w-4" />,
+          <TrendingUp key="trend" className="h-4 w-4" />,
+        ],
+      }}
+      headline={{
+        line1: "News2Flow AI",
+        line2: "Your Intelligent Newsroom",
+      }}
+      subtitle="Monitor trends, generate drafts, and publish stories — all powered by AI. Built for modern reporters and newsrooms."
+      buttons={{
+        primary: {
+          text: "Get Started",
+          onClick: () => navigate("/signup"),
+        },
+        secondary: {
+          text: "Sign In",
+          onClick: () => navigate("/login"),
+        },
+      }}
+    />
+  );
+};
+
+export default Landing;
