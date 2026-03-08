@@ -74,9 +74,14 @@ const TrendingTopics = () => {
                         </p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-sm font-mono font-bold text-foreground">
-                          {formatEngagement(topic.engagement)}
-                        </span>
+                        <div className="text-right">
+                          <span className="text-sm font-mono font-bold text-foreground">
+                            {formatEngagement(topic.engagement)}
+                          </span>
+                          <p className="text-[10px] font-mono text-muted-foreground mt-0.5">
+                            Score: {topic.significanceScore}/100
+                          </p>
+                        </div>
                         <Badge variant="outline" className="text-[10px] font-mono capitalize">
                           {topic.source}
                         </Badge>

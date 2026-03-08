@@ -6,6 +6,7 @@ export interface TrendingTopic {
   source: "twitter" | "rss" | "youtube";
   sourceHandle: string;
   engagement: number;
+  significanceScore: number;
   timestamp: string;
   summary: string;
   hasDraft: boolean;
@@ -20,6 +21,7 @@ export interface AIDraft {
   contentLength: "short" | "medium" | "long";
   createdAt: string;
   updatedAt: string;
+  tweetUrl?: string;
 }
 
 export interface MonitoredSource {
@@ -48,21 +50,21 @@ export interface TrainingScript {
 }
 
 export const mockTrendingTopics: TrendingTopic[] = [
-  { id: "t1", title: "Supreme Court Rules on Digital Privacy Rights", source: "twitter", sourceHandle: "@SCOTUSblog", engagement: 45200, timestamp: "12 min ago", summary: "The Supreme Court has issued a landmark ruling expanding digital privacy protections for citizens, potentially reshaping how tech companies handle user data.", hasDraft: true },
-  { id: "t2", title: "Federal Reserve Signals Rate Cut in Q2", source: "rss", sourceHandle: "Reuters Finance", engagement: 32100, timestamp: "28 min ago", summary: "Fed Chair indicated a potential rate cut in Q2 2026, citing improving inflation metrics and stable employment figures.", hasDraft: false },
-  { id: "t3", title: "SpaceX Starship Completes First Orbital Refueling", source: "youtube", sourceHandle: "@SpaceX", engagement: 89400, timestamp: "1 hr ago", summary: "SpaceX successfully demonstrated orbital refueling between two Starship vehicles, a critical milestone for the Artemis lunar program.", hasDraft: true },
-  { id: "t4", title: "WHO Declares New Pandemic Preparedness Framework", source: "twitter", sourceHandle: "@WHO", engagement: 28700, timestamp: "2 hr ago", summary: "The World Health Organization has announced a new global pandemic preparedness framework with binding commitments from 140+ nations.", hasDraft: false },
-  { id: "t5", title: "AI Regulation Bill Passes Senate Committee", source: "rss", sourceHandle: "Politico", engagement: 19800, timestamp: "3 hr ago", summary: "Bipartisan AI regulation bill advances through Senate committee, introducing mandatory safety testing and transparency requirements for frontier models.", hasDraft: true },
-  { id: "t6", title: "Tesla Unveils Next-Gen Robotaxi Fleet", source: "youtube", sourceHandle: "@Tesla", engagement: 67300, timestamp: "4 hr ago", summary: "Tesla revealed its production-ready robotaxi fleet during a live event, announcing initial deployment in 5 US cities starting Q3 2026.", hasDraft: false },
-  { id: "t7", title: "Climate Summit Reaches Historic Carbon Pledge", source: "twitter", sourceHandle: "@UN_Climate", engagement: 41200, timestamp: "5 hr ago", summary: "Nations at the Climate Summit have agreed to a historic pledge to reduce carbon emissions by 60% by 2035.", hasDraft: false },
-  { id: "t8", title: "Major Cybersecurity Breach Hits Financial Sector", source: "rss", sourceHandle: "WSJ Tech", engagement: 55800, timestamp: "6 hr ago", summary: "A sophisticated cyberattack has compromised data at three major financial institutions, affecting millions of accounts.", hasDraft: true },
+  { id: "t1", title: "Supreme Court Rules on Digital Privacy Rights", source: "twitter", sourceHandle: "@SCOTUSblog", engagement: 45200, significanceScore: 94, timestamp: "12 min ago", summary: "The Supreme Court has issued a landmark ruling expanding digital privacy protections for citizens, potentially reshaping how tech companies handle user data.", hasDraft: true },
+  { id: "t2", title: "Federal Reserve Signals Rate Cut in Q2", source: "rss", sourceHandle: "Reuters Finance", engagement: 32100, significanceScore: 78, timestamp: "28 min ago", summary: "Fed Chair indicated a potential rate cut in Q2 2026, citing improving inflation metrics and stable employment figures.", hasDraft: false },
+  { id: "t3", title: "SpaceX Starship Completes First Orbital Refueling", source: "youtube", sourceHandle: "@SpaceX", engagement: 89400, significanceScore: 91, timestamp: "1 hr ago", summary: "SpaceX successfully demonstrated orbital refueling between two Starship vehicles, a critical milestone for the Artemis lunar program.", hasDraft: true },
+  { id: "t4", title: "WHO Declares New Pandemic Preparedness Framework", source: "twitter", sourceHandle: "@WHO", engagement: 28700, significanceScore: 72, timestamp: "2 hr ago", summary: "The World Health Organization has announced a new global pandemic preparedness framework with binding commitments from 140+ nations.", hasDraft: false },
+  { id: "t5", title: "AI Regulation Bill Passes Senate Committee", source: "rss", sourceHandle: "Politico", engagement: 19800, significanceScore: 85, timestamp: "3 hr ago", summary: "Bipartisan AI regulation bill advances through Senate committee, introducing mandatory safety testing and transparency requirements for frontier models.", hasDraft: true },
+  { id: "t6", title: "Tesla Unveils Next-Gen Robotaxi Fleet", source: "youtube", sourceHandle: "@Tesla", engagement: 67300, significanceScore: 88, timestamp: "4 hr ago", summary: "Tesla revealed its production-ready robotaxi fleet during a live event, announcing initial deployment in 5 US cities starting Q3 2026.", hasDraft: false },
+  { id: "t7", title: "Climate Summit Reaches Historic Carbon Pledge", source: "twitter", sourceHandle: "@UN_Climate", engagement: 41200, significanceScore: 82, timestamp: "5 hr ago", summary: "Nations at the Climate Summit have agreed to a historic pledge to reduce carbon emissions by 60% by 2035.", hasDraft: false },
+  { id: "t8", title: "Major Cybersecurity Breach Hits Financial Sector", source: "rss", sourceHandle: "WSJ Tech", engagement: 55800, significanceScore: 90, timestamp: "6 hr ago", summary: "A sophisticated cyberattack has compromised data at three major financial institutions, affecting millions of accounts.", hasDraft: true },
 ];
 
 export const mockDrafts: AIDraft[] = [
   { id: "d1", topicId: "t1", topicTitle: "Supreme Court Rules on Digital Privacy Rights", content: "BREAKING: The Supreme Court just expanded digital privacy protections in a landmark ruling. This could fundamentally reshape how Big Tech handles your data. Here's what you need to know — and why it matters for every American. 🧵\n\nThe ruling establishes that digital footprints carry the same Fourth Amendment protections as physical property. Companies must now obtain explicit consent before collecting behavioral data.\n\nThis is the most significant privacy ruling since Carpenter v. United States in 2018.", status: "pending", contentLength: "medium", createdAt: "12 min ago", updatedAt: "12 min ago" },
   { id: "d2", topicId: "t3", topicTitle: "SpaceX Starship Completes First Orbital Refueling", content: "🚀 HISTORIC: SpaceX just nailed orbital refueling for the first time. This isn't just a space milestone — it's THE key technology that makes a permanent Moon base and Mars missions possible. The Artemis program just got very real.", status: "approved", contentLength: "short", createdAt: "1 hr ago", updatedAt: "45 min ago" },
   { id: "d3", topicId: "t5", topicTitle: "AI Regulation Bill Passes Senate Committee", content: "The AI regulation bill just cleared the Senate committee with bipartisan support. Mandatory safety testing. Transparency requirements. This could be the framework that shapes AI development for the next decade.\n\nKey provisions include:\n• Pre-deployment safety testing for frontier models\n• Public disclosure of training data sources\n• Annual algorithmic audits by independent third parties\n• Whistleblower protections for AI researchers\n\nBig Tech's response has been mixed — some welcome clarity, others warn of innovation slowdowns.", status: "pending", contentLength: "long", createdAt: "3 hr ago", updatedAt: "2 hr ago" },
-  { id: "d4", topicId: "t8", topicTitle: "Major Cybersecurity Breach Hits Financial Sector", content: "⚠️ DEVELOPING: A major cyberattack has hit three financial institutions simultaneously. Millions of accounts potentially compromised. Authorities are investigating what appears to be a coordinated state-sponsored attack.", status: "published", contentLength: "short", createdAt: "6 hr ago", updatedAt: "5 hr ago" },
+  { id: "d4", topicId: "t8", topicTitle: "Major Cybersecurity Breach Hits Financial Sector", content: "⚠️ DEVELOPING: A major cyberattack has hit three financial institutions simultaneously. Millions of accounts potentially compromised. Authorities are investigating what appears to be a coordinated state-sponsored attack.", status: "published", contentLength: "short", createdAt: "6 hr ago", updatedAt: "5 hr ago", tweetUrl: "https://x.com/JaneReporter/status/1234567890" },
 ];
 
 export const mockSources: MonitoredSource[] = [
