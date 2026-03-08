@@ -130,11 +130,7 @@ export function AppSidebar() {
 
       <SidebarFooter className="p-4">
         {!collapsed && (
-          <NavLink
-            to="/profile"
-            className="flex items-center gap-3 rounded p-1 -m-1 hover:bg-accent transition-colors"
-            activeClassName="bg-accent"
-          >
+          <div className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-full bg-foreground flex items-center justify-center text-xs font-bold text-background">
               JR
             </div>
@@ -142,7 +138,7 @@ export function AppSidebar() {
               <p className="text-xs font-semibold text-foreground font-body">Jane Reporter</p>
               <p className="text-[10px] text-muted-foreground font-body">Senior Correspondent</p>
             </div>
-          </NavLink>
+          </div>
         )}
       </SidebarFooter>
     </Sidebar>
