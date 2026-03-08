@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Hero from "@/components/ui/animated-shader-hero";
-import { Newspaper, Zap, TrendingUp } from "lucide-react";
+import { Newspaper } from "lucide-react";
 
 const Landing = () => {
   const navigate = useNavigate();
