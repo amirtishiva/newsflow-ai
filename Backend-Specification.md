@@ -719,7 +719,7 @@ All edge functions reside in `supabase/functions/{name}/index.ts`.
 **Logic:**
 1. Fetch topic from `trending_topics`
 2. Fetch user's training scripts to build style prompt
-3. Call OpenAI GPT-4 with topic context + style instructions + length constraint
+3. Call Google Gemini (`gemini-2.5-flash`) via `https://generativelanguage.googleapis.com/v1beta` with topic context + style instructions + length constraint
 4. Insert result into `ai_drafts` with status `pending`
 5. Update `trending_topics.has_draft = true`
 6. Insert notification of type `trend_alert`
