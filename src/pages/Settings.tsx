@@ -203,68 +203,69 @@ const Settings = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="text-base font-serif">AI Writing Style Training</CardTitle>
-              <p className="text-xs text-muted-foreground font-body">
-                Upload your best scripts to train the AI to write in your voice.
-                Accepted: .txt, .docx, .pdf · Max 10MB · Min 100 words
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold font-body">Training Progress</span>
-                  <span className="text-xs font-mono text-foreground">
-                    {trainingProgress}/{MAX_SCRIPTS} scripts
-                  </span>
-                </div>
-                <Progress value={(trainingProgress / MAX_SCRIPTS) * 100} className="h-2" />
-                {trainingProgress < 5 && (
-                  <p className="text-[11px] text-warning mt-1.5 font-body">
-                    Upload at least 5 scripts to enable AI drafting
-                  </p>
-                )}
-              </div>
-
-              <label className="cursor-pointer">
-                <input
-                  type="file"
-                  accept=".txt,.docx,.pdf"
-                  className="hidden"
-                  onChange={handleFileUpload}
-                />
-                <div className="flex items-center justify-center w-full h-10 rounded-md border border-input bg-background hover:bg-accent transition-colors text-sm font-body">
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload Script (.txt, .docx, .pdf)
-                </div>
-              </label>
-
-              <div className="space-y-2">
-                {scripts.map((script) => (
-                  <div
-                    key={script.id}
-                    className="flex items-center justify-between p-3 rounded bg-muted"
-                  >
-                    <div className="flex items-center gap-3">
-                      {statusIcon(script.status)}
-                      <div>
-                        <p className="text-sm font-semibold font-body">{script.fileName}</p>
-                        <p className="text-[10px] text-muted-foreground font-body">
-                          {script.fileSize} · Uploaded {script.uploadedAt}
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-7 w-7 text-destructive hover:text-destructive"
-                      onClick={() => handleRemoveScript(script.id)}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                <p className="text-xs text-muted-foreground font-body">
+                  Upload your best scripts to train the AI to write in your voice.
+                  Accepted: .txt, .docx, .pdf · Max 10MB · Min 100 words
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-semibold font-body">Training Progress</span>
+                    <span className="text-xs font-mono text-foreground">
+                      {trainingProgress}/{MAX_SCRIPTS} scripts
+                    </span>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  <Progress value={(trainingProgress / MAX_SCRIPTS) * 100} className="h-2" />
+                  {trainingProgress < 5 && (
+                    <p className="text-[11px] text-warning mt-1.5 font-body">
+                      Upload at least 5 scripts to enable AI drafting
+                    </p>
+                  )}
+                </div>
+
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    accept=".txt,.docx,.pdf"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                  <div className="flex items-center justify-center w-full h-10 rounded-md border border-input bg-background hover:bg-accent transition-colors text-sm font-body">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Upload Script (.txt, .docx, .pdf)
+                  </div>
+                </label>
+
+                <div className="space-y-2">
+                  {scripts.map((script) => (
+                    <div
+                      key={script.id}
+                      className="flex items-center justify-between p-3 rounded bg-muted"
+                    >
+                      <div className="flex items-center gap-3">
+                        {statusIcon(script.status)}
+                        <div>
+                          <p className="text-sm font-semibold font-body">{script.fileName}</p>
+                          <p className="text-[10px] text-muted-foreground font-body">
+                            {script.fileSize} · Uploaded {script.uploadedAt}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7 text-destructive hover:text-destructive"
+                        onClick={() => handleRemoveScript(script.id)}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         {/* Content Length Preference Tab */}
