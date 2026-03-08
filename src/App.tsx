@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
+import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import TrendingTopics from "./pages/TrendingTopics";
 import AIDrafts from "./pages/AIDrafts";
@@ -37,8 +38,11 @@ const App = () => (
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/onboarding" element={<Onboarding />} />
 
+          {/* Landing page (no layout) */}
+          <Route path="/" element={<Landing />} />
+
           {/* App routes (with layout) */}
-          <Route path="/" element={<AppLayout><Dashboard /></AppLayout>} />
+          <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
           <Route path="/trending" element={<AppLayout><TrendingTopics /></AppLayout>} />
           <Route path="/drafts" element={<AppLayout><AIDrafts /></AppLayout>} />
           <Route path="/published" element={<AppLayout><Published /></AppLayout>} />

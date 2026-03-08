@@ -29,7 +29,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const mainNav = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Trending Topics", url: "/trending", icon: TrendingUp },
   { title: "AI Drafts", url: "/drafts", icon: FileEdit },
   { title: "Published", url: "/published", icon: Send },

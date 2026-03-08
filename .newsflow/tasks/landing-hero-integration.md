@@ -1,21 +1,22 @@
 # Task: Landing Page Hero Integration
 
-### Status: [x] Planning | [ ] In Progress | [ ] Complete
+### Status: [ ] Planning | [ ] In Progress | [x] Complete
 
 ### Objective
 Integrate the animated-shader-hero component as a landing page with sign up, sign in, and onboarding connections.
 
 ### Plan
-1. **Copy component** — Save `animated-shader-hero.tsx` to `src/components/ui/`, fixing JSX syntax (the provided code has broken JSX with bare text instead of proper elements)
-2. **Create Landing page** — Create `src/pages/Landing.tsx` using the Hero component, configured with News2Flow AI branding, current color palette, and CTA buttons linking to `/signup` and `/login`
-3. **Update routing** — Change `App.tsx` so `/` renders the Landing page (no layout), move Dashboard to `/dashboard`
-4. **Wire navigation** — Ensure sign up/login buttons navigate correctly, and post-login/signup flows redirect to `/dashboard` or `/onboarding`
-
-### Reasoning
-- The hero component uses WebGL shaders — no external deps needed beyond React
-- The provided JSX is malformed (missing actual HTML tags, just text descriptions). I'll reconstruct proper JSX based on the structure described
-- Landing page should be standalone (no sidebar layout) like auth pages
-- Keep existing color palette and design tokens
+1. Copy component to `src/components/ui/animated-shader-hero.tsx` — fixed broken JSX from provided code
+2. Create `src/pages/Landing.tsx` with News2Flow AI branding
+3. Update `App.tsx` routing: `/` → Landing, `/dashboard` → Dashboard
+4. Wire auth redirects: Login → `/dashboard`, Signup → `/onboarding`, Onboarding → `/dashboard`
+5. Update sidebar Dashboard link to `/dashboard`
 
 ### Changes Made
-<!-- Updated after implementation -->
+- **`src/components/ui/animated-shader-hero.tsx`** — Created WebGL shader hero component with proper JSX, simplified renderer (removed pointer tracking complexity), uses project design tokens for font classes
+- **`src/pages/Landing.tsx`** — Landing page using Hero component with News2Flow AI branding, trust badge with lucide icons, CTA buttons routing to `/signup` and `/login`
+- **`src/App.tsx`** — Added Landing import, `/` route renders Landing (no layout), Dashboard moved to `/dashboard`
+- **`src/pages/Login.tsx`** — Post-login redirect changed from `/` to `/dashboard`
+- **`src/pages/Signup.tsx`** — Post-signup redirect changed from `/login` to `/onboarding`
+- **`src/pages/Onboarding.tsx`** — Post-onboarding redirect changed from `/` to `/dashboard`
+- **`src/components/AppSidebar.tsx`** — Dashboard nav link updated from `/` to `/dashboard`
