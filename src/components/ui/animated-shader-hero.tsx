@@ -205,7 +205,7 @@ const Hero: React.FC<HeroProps> = ({
             <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white animate-fade-in">
               {headline.line1}
             </span>
-            <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white/80 mt-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white/80 mt-2 animate-fade-in whitespace-nowrap" style={{ animationDelay: '0.2s' }}>
               {headline.line2}
             </span>
           </h1>
