@@ -1030,6 +1030,22 @@ SELECT cron.schedule(
 
 Stored via Supabase Secrets (Vault), accessed in Edge Functions via `Deno.env.get()`.
 
+**Supabase Project:** `utneimavxjfgiqwbuufs`
+**Supabase URL:** `https://utneimavxjfgiqwbuufs.supabase.co`
+**Edge Functions Base:** `https://utneimavxjfgiqwbuufs.supabase.co/functions/v1`
+
+### 11.1 Pre-configured Secrets (already set)
+
+| Secret | Description |
+|--------|-------------|
+| `SUPABASE_URL` | Project URL (`https://utneimavxjfgiqwbuufs.supabase.co`) |
+| `SUPABASE_PUBLISHABLE_KEY` | Anon/public key for client-side auth |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key for server-side operations (Edge Functions) |
+| `SUPABASE_DB_URL` | Direct database connection string |
+| `LOVABLE_API_KEY` | Lovable platform integration key |
+
+### 11.2 Required Secrets (to be added)
+
 | Secret | Used By | Description |
 |--------|---------|-------------|
 | `GEMINI_API_KEY` | `generate-draft`, `generate-research`, `process-script` | Google Gemini API key (personal) |
@@ -1040,6 +1056,50 @@ Stored via Supabase Secrets (Vault), accessed in Edge Functions via `Deno.env.ge
 | `YOUTUBE_API_KEY` | `poll-sources` | YouTube Data API v3 key |
 | `RESEND_API_KEY` | `send-digest` | Resend email API key |
 
+### 11.3 Frontend Environment Variables
+
+Defined in `.env` (auto-populated by Lovable):
+
+| Variable | Value |
+|----------|-------|
+| `VITE_SUPABASE_URL` | `https://utneimavxjfgiqwbuufs.supabase.co` |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Anon key |
+| `VITE_SUPABASE_PROJECT_ID` | `utneimavxjfgiqwbuufs` |
+
+### 11.4 Client Setup
+
+```typescript
+// src/integrations/supabase/client.ts (auto-generated)
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from './types';
+
+const SUPABASE_URL = "https://utneimavxjfgiqwbuufs.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "<anon-key>";
+
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: {
+    storage: localStorage,
+    persistSession: true,
+    autoRefreshToken: true,
+  }
+});
+```
+
 ---
 
-*Generated: 2026-03-08 | Version: 1.0 | Status: Specification*
+## 12. Current Supabase State
+
+> Snapshot as of 2026-03-08. The database is empty — all tables, triggers, RLS policies, and storage buckets described above are **specifications to be created**.
+
+| Resource | Status |
+|----------|--------|
+| Tables | None created yet |
+| Triggers | None created yet |
+| Storage Buckets | None created yet |
+| Edge Functions | None deployed yet |
+| RLS Policies | Auto-enable trigger active (`rls_auto_enable`) |
+| Custom Functions | Only `rls_auto_enable` exists |
+
+---
+
+*Generated: 2026-03-08 | Version: 1.1 | Status: Specification — aligned with Supabase project `utneimavxjfgiqwbuufs`*
