@@ -25,7 +25,7 @@ const Login = () => {
     setTimeout(() => {
       setLoading(false);
       toast.success("Logged in successfully!");
-      navigate("/");
+      navigate("/dashboard");
     }, 1000);
   };
 

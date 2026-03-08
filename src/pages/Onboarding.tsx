@@ -59,7 +59,7 @@ const Onboarding = () => {
       setCurrentStep(currentStep + 1);
     } else {
       toast.success("Onboarding complete! Welcome to News2Flow AI.");
-      navigate("/");
+      navigate("/dashboard");
     }
   };
 
