@@ -38,8 +38,11 @@ const App = () => (
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/onboarding" element={<Onboarding />} />
 
+          {/* Landing page (no layout) */}
+          <Route path="/" element={<Landing />} />
+
           {/* App routes (with layout) */}
-          <Route path="/" element={<AppLayout><Dashboard /></AppLayout>} />
+          <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
           <Route path="/trending" element={<AppLayout><TrendingTopics /></AppLayout>} />
           <Route path="/drafts" element={<AppLayout><AIDrafts /></AppLayout>} />
           <Route path="/published" element={<AppLayout><Published /></AppLayout>} />
