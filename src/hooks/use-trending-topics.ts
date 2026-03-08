@@ -13,7 +13,7 @@ export function useTrendingTopics(sourceFilter?: string) {
         .eq("user_id", user!.id)
         .order("significance_score", { ascending: false });
       if (sourceFilter && sourceFilter !== "all") {
-        query = query.eq("source", sourceFilter);
+        query = query.eq("source", sourceFilter as any);
       }
       const { data, error } = await query;
       if (error) throw error;

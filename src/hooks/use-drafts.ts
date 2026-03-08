@@ -14,7 +14,7 @@ export function useDrafts(statusFilter?: string) {
         .eq("user_id", user!.id)
         .order("created_at", { ascending: false });
       if (statusFilter && statusFilter !== "all") {
-        query = query.eq("status", statusFilter);
+        query = query.eq("status", statusFilter as any);
       }
       const { data, error } = await query;
       if (error) throw error;

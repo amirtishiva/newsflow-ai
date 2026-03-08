@@ -13,7 +13,7 @@ export function useActivityLogs(filter?: string, search?: string) {
         .eq("user_id", user!.id)
         .order("created_at", { ascending: false });
       if (filter && filter !== "all") {
-        query = query.eq("event_type", filter);
+        query = query.eq("event_type", filter as any);
       }
       if (search) {
         query = query.ilike("details", `%${search}%`);
