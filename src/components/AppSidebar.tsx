@@ -59,7 +59,7 @@ export function AppSidebar() {
           {!collapsed && (
             <div>
               <h1 className="text-sm font-serif font-bold text-foreground tracking-tight">
-                Synthetic
+                News2Flow AI
               </h1>
               <p className="text-[10px] font-body text-muted-foreground uppercase tracking-[0.15em]">
                 Content Manager
