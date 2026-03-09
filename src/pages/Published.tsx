@@ -75,7 +75,7 @@ const Published = () => {
                     <Button size="sm" variant="ghost" className="text-xs h-7 font-body" onClick={() => setViewDraftId(post.id)}>
                       <FileText className="mr-1 h-3 w-3" /> Original Draft
                     </Button>
-                    <Button size="sm" variant="ghost" className="text-xs h-7 text-destructive hover:text-destructive font-body" onClick={() => handleDelete(post)}>
+                    <Button size="sm" variant="ghost" className="text-xs h-7 text-destructive hover:text-destructive font-body" onClick={() => setDeleteTarget(post)}>
                       <Trash2 className="mr-1 h-3 w-3" /> Delete
                     </Button>
                   </div>
