@@ -86,6 +86,23 @@ const Published = () => {
         </div>
       )}
 
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-serif">Delete Published Post?</AlertDialogTitle>
+            <AlertDialogDescription className="font-body">
+              This will permanently delete "{deleteTarget?.topic_title}". This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="font-body">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-body" onClick={() => { handleDelete(deleteTarget); setDeleteTarget(null); }}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Dialog open={!!viewDraftId} onOpenChange={() => setViewDraftId(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader><DialogTitle className="font-serif">Original AI Draft</DialogTitle></DialogHeader>

@@ -260,6 +260,23 @@ const Settings = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={!!deleteScriptTarget} onOpenChange={(open) => !open && setDeleteScriptTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-serif">Delete Training Script?</AlertDialogTitle>
+            <AlertDialogDescription className="font-body">
+              This will permanently delete "{deleteScriptTarget?.fileName}". Your style profile may be affected.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="font-body">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-body" onClick={() => { deleteScript.mutate({ id: deleteScriptTarget!.id, storagePath: deleteScriptTarget!.storagePath }); setDeleteScriptTarget(null); }}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
