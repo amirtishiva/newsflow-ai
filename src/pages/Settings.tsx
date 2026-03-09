@@ -137,7 +137,7 @@ const Settings = () => {
                           <p className="text-[10px] text-muted-foreground font-body">{script.file_size} · Uploaded {new Date(script.uploaded_at).toLocaleDateString()}</p>
                         </div>
                       </div>
-                      <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteScript.mutate({ id: script.id, storagePath: script.storage_path })}>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => setDeleteScriptTarget({ id: script.id, storagePath: script.storage_path, fileName: script.file_name })}>
                         <Trash2 className="h-3 w-3" />
                       </Button>
                     </div>
