@@ -29,8 +29,8 @@ const Settings = () => {
   const { data: prefs, isLoading: prefsLoading } = usePreferences();
   const updatePrefs = useUpdatePreferences();
 
-  // Local state for form fields (initialized from prefs)
   const [localPrefs, setLocalPrefs] = useState<Record<string, any> | null>(null);
+  const [deleteScriptTarget, setDeleteScriptTarget] = useState<{ id: string; storagePath?: string | null; fileName?: string } | null>(null);
   const p = localPrefs ?? prefs;
 
   const trainingProgress = scripts?.filter((s) => s.status === "complete").length ?? 0;
