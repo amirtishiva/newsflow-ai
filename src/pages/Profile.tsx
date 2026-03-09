@@ -54,8 +54,8 @@ export default function Profile() {
 
   const handleSave = () => {
     updateProfile.mutate({
-      full_name: editForm.name ?? profile?.full_name,
-      display_name: editForm.name ?? profile?.display_name,
+      full_name: editForm.full_name ?? profile?.full_name,
+      display_name: editForm.display_name ?? profile?.display_name,
       title: editForm.title ?? profile?.title,
       bio: editForm.bio ?? profile?.bio,
       location: editForm.location ?? profile?.location,
