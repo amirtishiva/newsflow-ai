@@ -137,12 +137,16 @@ export default function Profile() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-body">Full Name</Label>
-                  <Input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} />
+                  <Input value={editForm.full_name} onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-body">Title</Label>
-                  <Input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} />
+                  <Label className="text-xs font-body">Display Name</Label>
+                  <Input value={editForm.display_name} onChange={(e) => setEditForm({ ...editForm, display_name: e.target.value })} />
                 </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-body">Title</Label>
+                <Input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-body">Bio</Label>
