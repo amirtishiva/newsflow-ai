@@ -3,8 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Trash2, ExternalLink, FileText, Clock } from "lucide-react";
-import { useDrafts, useUpdateDraftStatus, useDeleteDraft } from "@/hooks/use-drafts";
+import { Trash2, ExternalLink, FileText } from "lucide-react";
+import { useDrafts, useDeleteDraft } from "@/hooks/use-drafts";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,15 +20,17 @@ const Published = () => {
   const viewDraft = posts.find((p) => p.id === viewDraftId);
 
   const handleDelete = async (post: any) => {
-    deleteDraft.mutate(post.id);
-    if (user) {
-      await supabase.from("activity_logs").insert({
-        user_id: user.id,
-        event_type: "post_deleted" as any,
-        details: `Deleted published post: "${post.topic_title}"`,
-      });
-    }
-    toast.success("Post deleted.");
+    deleteDraft.mutate(post.id, {
+      onSuccess: async () => {
+        if (user) {
+          await supabase.from("activity_logs").insert({
+            user_id: user.id,
+            event_type: "post_deleted" as any,
+            details: `Deleted published post: "${post.topic_title}"`,
+          });
+        }
+      },
+    });
   };
 
   return (

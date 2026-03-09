@@ -33,7 +33,14 @@ export function useAddSource() {
       });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      if (user) {
+        await supabase.from("activity_logs").insert({
+          user_id: user.id,
+          event_type: "source_added" as any,
+          details: "Added a new monitored source",
+        });
+      }
       queryClient.invalidateQueries({ queryKey: ["sources"] });
       toast.success("Source added.");
     },
