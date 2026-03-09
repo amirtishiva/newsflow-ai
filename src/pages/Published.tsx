@@ -20,15 +20,17 @@ const Published = () => {
   const viewDraft = posts.find((p) => p.id === viewDraftId);
 
   const handleDelete = async (post: any) => {
-    deleteDraft.mutate(post.id);
-    if (user) {
-      await supabase.from("activity_logs").insert({
-        user_id: user.id,
-        event_type: "post_deleted" as any,
-        details: `Deleted published post: "${post.topic_title}"`,
-      });
-    }
-    toast.success("Post deleted.");
+    deleteDraft.mutate(post.id, {
+      onSuccess: async () => {
+        if (user) {
+          await supabase.from("activity_logs").insert({
+            user_id: user.id,
+            event_type: "post_deleted" as any,
+            details: `Deleted published post: "${post.topic_title}"`,
+          });
+        }
+      },
+    });
   };
 
   return (

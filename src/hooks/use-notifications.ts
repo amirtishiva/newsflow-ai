@@ -19,6 +19,7 @@ export function useNotifications() {
         filter: `user_id=eq.${user.id}`,
       }, () => {
         queryClient.invalidateQueries({ queryKey: ["notifications"] });
+        queryClient.invalidateQueries({ queryKey: ["notifications-unread"] });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };

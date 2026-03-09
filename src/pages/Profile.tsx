@@ -98,7 +98,8 @@ export default function Profile() {
               if (isEditing) { setIsEditing(false); }
               else {
                 setEditForm({
-                  name: p?.display_name || p?.full_name || "",
+                  full_name: p?.full_name || "",
+                  display_name: p?.display_name || "",
                   title: p?.title || "",
                   bio: p?.bio || "",
                   location: p?.location || "",
