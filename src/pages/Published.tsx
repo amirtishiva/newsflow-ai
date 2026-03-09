@@ -16,6 +16,7 @@ const Published = () => {
   const deleteDraft = useDeleteDraft();
   const { user } = useAuth();
   const [viewDraftId, setViewDraftId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
 
   const posts = allDrafts ?? [];
   const viewDraft = posts.find((p) => p.id === viewDraftId);
