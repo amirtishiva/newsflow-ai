@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Trash2, ExternalLink, FileText } from "lucide-react";
 import { useDrafts, useDeleteDraft } from "@/hooks/use-drafts";
 import { toast } from "sonner";
@@ -15,6 +16,7 @@ const Published = () => {
   const deleteDraft = useDeleteDraft();
   const { user } = useAuth();
   const [viewDraftId, setViewDraftId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
 
   const posts = allDrafts ?? [];
   const viewDraft = posts.find((p) => p.id === viewDraftId);
@@ -73,7 +75,7 @@ const Published = () => {
                     <Button size="sm" variant="ghost" className="text-xs h-7 font-body" onClick={() => setViewDraftId(post.id)}>
                       <FileText className="mr-1 h-3 w-3" /> Original Draft
                     </Button>
-                    <Button size="sm" variant="ghost" className="text-xs h-7 text-destructive hover:text-destructive font-body" onClick={() => handleDelete(post)}>
+                    <Button size="sm" variant="ghost" className="text-xs h-7 text-destructive hover:text-destructive font-body" onClick={() => setDeleteTarget(post)}>
                       <Trash2 className="mr-1 h-3 w-3" /> Delete
                     </Button>
                   </div>
@@ -83,6 +85,23 @@ const Published = () => {
           ))}
         </div>
       )}
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-serif">Delete Published Post?</AlertDialogTitle>
+            <AlertDialogDescription className="font-body">
+              This will permanently delete "{deleteTarget?.topic_title}". This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="font-body">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-body" onClick={() => { handleDelete(deleteTarget); setDeleteTarget(null); }}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Dialog open={!!viewDraftId} onOpenChange={() => setViewDraftId(null)}>
         <DialogContent className="max-w-2xl">

@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import {
   Upload, FileText, CheckCircle, Loader2, AlertCircle, Twitter, Clock, Mail, Trash2, Link, Ruler, GraduationCap,
 } from "lucide-react";
@@ -28,8 +29,8 @@ const Settings = () => {
   const { data: prefs, isLoading: prefsLoading } = usePreferences();
   const updatePrefs = useUpdatePreferences();
 
-  // Local state for form fields (initialized from prefs)
   const [localPrefs, setLocalPrefs] = useState<Record<string, any> | null>(null);
+  const [deleteScriptTarget, setDeleteScriptTarget] = useState<{ id: string; storagePath?: string | null; fileName?: string } | null>(null);
   const p = localPrefs ?? prefs;
 
   const trainingProgress = scripts?.filter((s) => s.status === "complete").length ?? 0;
@@ -136,7 +137,7 @@ const Settings = () => {
                           <p className="text-[10px] text-muted-foreground font-body">{script.file_size} · Uploaded {new Date(script.uploaded_at).toLocaleDateString()}</p>
                         </div>
                       </div>
-                      <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteScript.mutate({ id: script.id, storagePath: script.storage_path })}>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => setDeleteScriptTarget({ id: script.id, storagePath: script.storage_path, fileName: script.file_name })}>
                         <Trash2 className="h-3 w-3" />
                       </Button>
                     </div>
@@ -259,6 +260,23 @@ const Settings = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={!!deleteScriptTarget} onOpenChange={(open) => !open && setDeleteScriptTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-serif">Delete Training Script?</AlertDialogTitle>
+            <AlertDialogDescription className="font-body">
+              This will permanently delete "{deleteScriptTarget?.fileName}". Your style profile may be affected.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="font-body">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-body" onClick={() => { deleteScript.mutate({ id: deleteScriptTarget!.id, storagePath: deleteScriptTarget!.storagePath }); setDeleteScriptTarget(null); }}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
